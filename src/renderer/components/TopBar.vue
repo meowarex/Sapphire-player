@@ -6,7 +6,7 @@ import Menu from "@/components/menu/MenuContainer.vue";
 import MenuOption from "@/components/menu/MenuOption.vue";
 import MenuSplitter from "@/components/menu/MenuSplitter.vue";
 import ProcessorUsageMeter from "@/components/ProcessorUsageMeter.vue";
-import { AudioFileIcon, DiscordIcon, GitHubIcon, MusicFolderIcon, ResetIcon, ZoomInIcon, ZoomOutIcon, RemoveIcon, ResizeIcon, DownloadingUpdatesIcon, SettingsIcon, BookshelfIcon } from "@/icons/material";
+import { AudioFileIcon, DiscordIcon, GitHubIcon, MusicFolderIcon, ResetIcon, ZoomInIcon, ZoomOutIcon, RemoveIcon, ResizeIcon, SettingsIcon, BookshelfIcon } from "@/icons/material";
 import { useFps } from "@vueuse/core";
 import { player } from "@/logic/player";
 import AmethystLogo from "@/icons/AmethystLogo.vue";
@@ -100,13 +100,6 @@ const refreshWindow = () => location.reload();
           :icon="ResetIcon"
           @click="refreshWindow"
         />
-
-        <menu-splitter />
-        <menu-option
-          :title="`Check for updates`"
-          :icon="DownloadingUpdatesIcon"
-          @click="electron.checkForUpdates()"
-        />
       </Menu>
       <Menu title="View">
         <menu-option
@@ -126,17 +119,17 @@ const refreshWindow = () => location.reload();
         <menu-option
           title="Documentation"
           :icon="BookshelfIcon"
-          @click="electron.open('https://amethyst.pages.dev/')"
+          @click="electron.open('https://atomix.one/')"
         />
         <menu-option
           title="GitHub Repository"
           :icon="GitHubIcon"
-          @click="electron.open('https://github.com/geoxor/amethyst')"
+          @click="electron.open('https://github.com/A-T-O-M-I-X/Saphire-player')"
         />
         <menu-option
           title="Discord Server"
           :icon="DiscordIcon"
-          @click="electron.open('https://discord.gg/geoxor')"
+          @click="electron.open('https://discord.gg/tVRTWB9NCc')"
         />
       </Menu>
       <Menu

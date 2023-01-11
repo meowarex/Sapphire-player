@@ -125,21 +125,6 @@ export class MainWindow {
 		this.window.loadURL(this.resolveHTMLPath("index"));
 
 		this.window.on("ready-to-show", () => {
-			!IS_DEV && import("electron-updater").then(({ autoUpdater }) => {
-				import("electron-log").then(log => {
-					// Autoupdates
-					// Remove this if your app does not use auto updates
-					log.transports.file.level = "info";
-					autoUpdater.logger = log;
-					autoUpdater.checkForUpdatesAndNotify();
-
-					// Check for updates every 1 hour
-					this.updateCheckerTimer && clearInterval(this.updateCheckerTimer);
-					this.updateCheckerTimer = setInterval(() => autoUpdater.checkForUpdatesAndNotify(), 3600 * 1000);
-
-					autoUpdater.on("update-downloaded", () => this.window.webContents.send("update"));
-				});
-			});
 
 			if (process.env.START_MINIMIZED)
 				this.window.minimize();
