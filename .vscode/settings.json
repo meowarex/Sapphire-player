@@ -1,0 +1,54 @@
+{
+  "css.customData": [
+    ".vscode/css.json"
+  ],
+  "eslint.validate": [
+    "javascript",
+    "vue",
+    "typescript",
+  ],
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": false,
+  },
+  "[vue]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": false,
+    },
+  },
+  "typescript.inlayHints.variableTypes.enabled": false,
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "todohighlight.keywords": [
+    {
+      "text": "TODO:",
+      "color": "#ff00b6",
+      "backgroundColor": "#6600b622",
+      "isWholeLine": true
+    }
+  ],
+  "search.exclude": {
+    ".git": true,
+    ".eslintcache": true,
+    "release/{build,app/dist}": true,
+    "node_modules": true,
+    "npm-debug.log.*": true,
+    "test/**/__snapshots__": true,
+    "package-lock.json": true,
+    "*.{css,sass,scss}.d.ts": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
+  },
+  "testing.automaticallyOpenPeekView": "never"
+}

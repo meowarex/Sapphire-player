@@ -1,0 +1,37 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+music
+*.pid
+*.seed
+preload.js
+
+
+# Coverage directory used by tools like istanbul
+coverage
+.eslintcache
+
+# Dependency directory
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
+node_modules
+
+# OSX
+.DS_Store
+
+PlaygroundView.vue
+
+release/app/dist
+release/build
+
+.idea
+npm-debug.log.*
+*.css.d.ts
+*.sass.d.ts
+*.scss.d.ts
+
+release
+dist
+**/.vitepress/cache

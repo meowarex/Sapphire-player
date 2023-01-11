@@ -1,0 +1,345 @@
+{
+  "name": "saphire",
+  "author": "Atomix <info@atomix.one>",
+  "productName": "Saphire",
+  "version": "1.8.39",
+  "main": "./release/dist/main/main.js",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/A-T-O-M-I-X/Saphire-Player"
+    }
+  ],
+  "description": "Saphire is an Electron-based audio player with a node-based audio routing system, the main goal of this project is to make a music player in Typescript that has pro-level features as most DAWs / DAEs, while also providing useful tools and customizability to the end-user to deal with audio.",
+  "scripts": {
+    "dev": "concurrently -p none \"yarn start:main\" \"yarn start:renderer\" ",
+    "build": "concurrently -p none \"yarn build:main\" \"yarn build:renderer\" \"yarn gen:all\"",
+    "build:main": "concurrently -p none \"tsc ./src/main/preload.ts\" \"tsc -p ./src/main/tsconfig.json\" ",
+    "build:renderer": "vite build --config ./src/renderer/vite.config.ts",
+    "start:main": "yarn build:main && cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only ./src/main/main.ts",
+    "start:renderer": "vite dev --config ./src/renderer/vite.config.ts",
+    "package": "rimraf ./release && yarn build && electron-builder build --publish never",
+    "package:asarless": "yarn build && electron-builder build --config.asar=false",
+    "preinstall": "yarn global add electron-builder",
+    "postinstall": "electron-builder install-app-deps",
+    "lint": "eslint -c .eslintrc --color --ext .ts,.js,.vue src/",
+    "install:system": "yarn install && yarn test --run && yarn package",
+    "install:windows": "yarn install:system && explorer release\\build",
+    "clean": "git reset --hard && git clean -f && rimraf ./release",
+    "test": "vitest --config ./src/renderer/vite.config.ts",
+    "docs:dev": "vitepress dev docs --host",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "gen:all": "concurrently -p none \"yarn gen:scoop\" \"yarn gen:winget\" \"yarn gen:aur\"",
+    "gen:scoop": "yarn tsx ./scripts/generate_scoop_manifest.ts",
+    "gen:winget": "yarn tsx ./scripts/generate_winget_manifest.ts",
+    "gen:aur": "yarn tsx ./scripts/generate_aur_manifest.ts"
+  },
+  "electronmon": {
+    "patterns": [
+      "!src/__tests__/**",
+      "!release/**",
+      "!**/*.amf",
+      "!src/renderer/**"
+    ],
+    "logLevel": "quiet"
+  },
+  "lint-staged": {
+    "*.{js,vue,ts}": [
+      "cross-env NODE_ENV=development eslint --cache"
+    ],
+    "*.json,.{eslintrc,prettierrc}": [
+      "prettier --ignore-path .eslintignore --parser json --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --ignore-path .eslintignore --single-quote --write"
+    ],
+    "*.{html,md,yml}": [
+      "prettier --ignore-path .eslintignore --single-quote --write"
+    ]
+  },
+  "build": {
+    "productName": "Saphire",
+    "appId": "org.Amethyst",
+    "asar": true,
+    "asarUnpack": "**\\*.{node,dll}",
+    "fileAssociations": [
+      {
+        "ext": "ang",
+        "icon": "./assets/images/ang.ico",
+        "name": "Saphire Node Graph",
+        "description": "Saphire Node Graph"
+      },
+      {
+        "ext": "acf",
+        "icon": "./assets/images/acf.ico",
+        "name": "Saphire Configuration File",
+        "description": "Saphire Configuration File"
+      },
+      {
+        "ext": "amf",
+        "icon": "./assets/images/amf.ico",
+        "name": "Saphire Metadata File",
+        "description": "Saphire Metadata File"
+      },
+      {
+        "ext": "ogg",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "ogv",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "oga",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "ogx",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "ogm",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "spx",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "wav",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "wave",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "m4a",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "m4b",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "m4p",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "m4r",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "m4v",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "3gp",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "flac",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "opus",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "aac",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "aiff",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "mp3",
+        "icon": "./assets/images/audio.ico"
+      },
+      {
+        "ext": "m4a",
+        "icon": "./assets/images/audio.ico"
+      }
+    ],
+    "files": [
+      "./release/dist/**/*",
+      "!**/*.d.ts"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "snap",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "asarUnpack": [
+        "**/node_modules/sharp/**"
+      ],
+      "category": "Music"
+    },
+    "mac": {
+      "target": {
+        "target": "default",
+        "arch": [
+          "arm64",
+          "x64"
+        ]
+      },
+      "type": "distribution",
+      "hardenedRuntime": true,
+      "entitlements": "assets/entitlements.mac.plist",
+      "entitlementsInherit": "assets/entitlements.mac.plist",
+      "gatekeeperAssess": false
+    },
+    "directories": {
+      "output": "release/build",
+      "buildResources": "assets"
+    },
+    "extraResources": [
+      "assets/**/*",
+      "!assets/**/*.aseprite"
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "Geoxor",
+      "repo": "saphire-player"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/A-T-O-M-I-X/Saphire-Player"
+  },
+  "contributors": [
+    {
+      "name": "A T O M I X",
+      "email": "info@atomix.one",
+      "url": "https://github.com/A-T-O-M-I-X/"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/A-T-O-M-I-X/Saphire-Player"
+  },
+  "keywords": [
+    "electron",
+    "music-player",
+    "vue"
+  ],
+  "homepage": "https://github.com/A-T-O-M-I-X/Saphire-Player",
+  "devDependencies": {
+    "@types/discord-rpc": "^4.0.3",
+    "@types/node": "^18.11.18",
+    "@types/sharp": "^0.31.1",
+    "@types/source-map-support": "^0.5.6",
+    "@types/three": "^0.148.0",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vue/eslint-config-typescript": "^11.0.2",
+    "@vue/test-utils": "^2.2.7",
+    "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
+    "electron": "20.3.7",
+    "electron-builder": "^23.6.0",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-mock-ipc": "^0.3.12",
+    "electron-notarize": "^1.2.2",
+    "electronmon": "^2.0.2",
+    "eslint": "^8.31.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-vue": "^9.8.0",
+    "happy-dom": "^8.1.3",
+    "postcss": "^8.4.21",
+    "prettier": "^2.8.2",
+    "rimraf": "^3.0.2",
+    "standardized-audio-context-mock": "^9.6.8",
+    "tailwindcss": "^3.2.4",
+    "ts-node": "^10.7.0",
+    "tsx": "^3.12.1",
+    "typescript": "^4.9.4",
+    "vitepress": "^1.0.0-alpha.35",
+    "vitest": "^0.26.3",
+    "vue-tsc": "^1.0.24"
+  },
+  "dependencies": {
+    "@supercharge/promise-pool": "^2.3.2",
+    "@types/pako": "^2.0.0",
+    "@types/pidusage": "^2.0.2",
+    "@types/wavesurfer.js": "^6.0.3",
+    "@vue-flow/additional-components": "^1.3.3",
+    "@vue-flow/core": "^1.11.1",
+    "@vueuse/core": "^9.10.0",
+    "buffer": "^6.0.3",
+    "chalk": "4.1.2",
+    "discord-rpc": "^4.0.1",
+    "electron-debug": "^3.2.0",
+    "electron-log": "^4.4.6",
+    "electron-updater": "^5.3.0",
+    "ffmpeg-static": "^5.1.0",
+    "mitt": "^3.0.0",
+    "music-metadata": "7.13.1",
+    "musicbrainz-api": "^0.10.1",
+    "open": "^8.4.0",
+    "pako": "^2.1.0",
+    "pidusage": "^3.0.2",
+    "pretty-ms": "^8.0.0",
+    "sharp": "^0.31.3",
+    "three": "^0.148.0",
+    "vite": "^4.0.3",
+    "vite-plugin-windicss": "^1.8.10",
+    "vue": "^3.2.45",
+    "vue-router": "4",
+    "vue-virtual-scroller": "^2.0.0-beta.7",
+    "wavesurfer.js": "^6.4.0",
+    "windicss": "^3.5.6"
+  },
+  "devEngines": {
+    "node": ">=19.1.x",
+    "npm": ">=8.x",
+    "yarn": ">=1.22.x"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "outDir": "../../release/dist"
+  },
+  "files": ["main.ts"],
+  "include": ["../../types/**/*.d.ts", "preload.ts"]
+}
