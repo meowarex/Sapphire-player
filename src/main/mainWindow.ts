@@ -50,8 +50,8 @@ const notifications: Record<string, Function> = {
 	},
 
 	showUpdateAvailableNotification: () => {
-		const title = "Saphire Update Available";
-		const body = "Saphire is downloading an update and will restart when complete";
+		const title = "Sapphire Update Available";
+		const body = "Sapphire is downloading an update and will restart when complete";
 		new Notification({
 			icon: icon(),
 			title,
@@ -210,7 +210,7 @@ export class MainWindow {
 					properties: ["openFile"],
 					filters: [
 						{ name: "Audio", extensions: ALLOWED_AUDIO_EXTENSIONS },
-						{ name: "Saphire Node Graph", extensions: ["ang"]}
+						{ name: "Sapphire Node Graph", extensions: ["ang"]}
 					],
 				});
 
@@ -240,7 +240,7 @@ export class MainWindow {
 			},
 
 			"show-save-dialog": () => dialog.showSaveDialog({filters: [
-				{ name: "Saphire Node Graph", extensions: ["ang"] },
+				{ name: "Sapphire Node Graph", extensions: ["ang"] },
 			]}),
 			
 			"dev-tools": () => {

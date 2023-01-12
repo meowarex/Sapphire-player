@@ -1,8 +1,8 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
-  title: "Saphire",
-  description: "Saphire Documentation",
+  title: "Sapphire",
+  description: "Sapphire Documentation",
   lang: 'en-US',
   appearance: "dark",
   locales: {
@@ -88,14 +88,14 @@ export default defineConfig({
         icon: "discord"
       },
       {
-        link: "https://github.com/A-T-O-M-I-X/Saphire-Player",
+        link: "https://github.com/A-T-O-M-I-X/Sapphire-Player",
         icon: "github"
       },
     ],
     editLink: {
-      pattern: 'https://github.com/A-T-O-M-I-X/Saphire-Player'
+      pattern: 'https://github.com/A-T-O-M-I-X/Sapphire-Player'
     },
-    siteTitle: "Saphire",
+    siteTitle: "Sapphire",
     logo: "/icon.svg",
     nav: [
       { text: "Documentation", link: "/introduction" },

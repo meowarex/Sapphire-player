@@ -1,16 +1,16 @@
 {
-  "name": "saphire",
+  "name": "sapphire",
   "author": "Atomix <info@atomix.one>",
-  "productName": "Saphire",
+  "productName": "Sapphire",
   "version": "1.8.39",
   "main": "./release/dist/main/main.js",
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/A-T-O-M-I-X/Saphire-Player"
+      "url": "https://github.com/A-T-O-M-I-X/Sapphire-Player"
     }
   ],
-  "description": "Saphire is an Electron-based audio player with a node-based audio routing system, the main goal of this project is to make a music player in Typescript that has pro-level features as most DAWs / DAEs, while also providing useful tools and customizability to the end-user to deal with audio.",
+  "description": "Sapphire is an Electron-based audio player with a node-based audio routing system, the main goal of this project is to make a music player in Typescript that has pro-level features as most DAWs / DAEs, while also providing useful tools and customizability to the end-user to deal with audio.",
   "scripts": {
     "dev": "concurrently -p none \"yarn start:main\" \"yarn start:renderer\" ",
     "build": "concurrently -p none \"yarn build:main\" \"yarn build:renderer\" \"yarn gen:all\"",
@@ -59,7 +59,7 @@
     ]
   },
   "build": {
-    "productName": "Saphire",
+    "productName": "Sapphire",
     "appId": "org.Amethyst",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
@@ -67,20 +67,20 @@
       {
         "ext": "ang",
         "icon": "./assets/images/ang.ico",
-        "name": "Saphire Node Graph",
-        "description": "Saphire Node Graph"
+        "name": "Sapphire Node Graph",
+        "description": "Sapphire Node Graph"
       },
       {
         "ext": "acf",
         "icon": "./assets/images/acf.ico",
-        "name": "Saphire Configuration File",
-        "description": "Saphire Configuration File"
+        "name": "Sapphire Configuration File",
+        "description": "Sapphire Configuration File"
       },
       {
         "ext": "amf",
         "icon": "./assets/images/amf.ico",
-        "name": "Saphire Metadata File",
-        "description": "Saphire Metadata File"
+        "name": "Sapphire Metadata File",
+        "description": "Sapphire Metadata File"
       },
       {
         "ext": "ogg",
@@ -245,12 +245,12 @@
     "publish": {
       "provider": "github",
       "owner": "Geoxor",
-      "repo": "saphire-player"
+      "repo": "sapphire-player"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/A-T-O-M-I-X/Saphire-Player"
+    "url": "git+https://github.com/A-T-O-M-I-X/Sapphire-Player"
   },
   "contributors": [
     {
@@ -261,14 +261,14 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/A-T-O-M-I-X/Saphire-Player"
+    "url": "https://github.com/A-T-O-M-I-X/Sapphire-Player"
   },
   "keywords": [
     "electron",
     "music-player",
     "vue"
   ],
-  "homepage": "https://github.com/A-T-O-M-I-X/Saphire-Player",
+  "homepage": "https://github.com/A-T-O-M-I-X/Sapphire-Player",
   "devDependencies": {
     "@types/discord-rpc": "^4.0.3",
     "@types/node": "^18.11.18",

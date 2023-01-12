@@ -10,11 +10,11 @@ try {
 }
 
 fs.writeFileSync("./manifests/aur/.SRCINFO", `
-pkgbase = saphire-player
+pkgbase = sapphire-player
 pkgdesc = ${description}
 pkgver = ${version}
 pkgrel = 1
-url = https://github.com/A-T-O-M-I-X/Saphire-Player
+url = https://github.com/A-T-O-M-I-X/Sapphire-Player
 arch = x86_64
 license = ${license}
 makedepends = gcc-multilib
@@ -22,10 +22,10 @@ makedepends = git
 makedepends = gendesk
 makedepends = yarn
 makedepends = libxcrypt-compat
-source = git+https://github.com/A-T-O-M-I-X/Saphire-Player
+source = git+https://github.com/A-T-O-M-I-X/Sapphire-Player
 md5sums = SKIP
 
-pkgname = saphire-player
+pkgname = sapphire-player
 `);
 
 console.log(chalk.bgCyan("[AUR Manifest]"), chalk.cyan("Generated .SRCINFO"));

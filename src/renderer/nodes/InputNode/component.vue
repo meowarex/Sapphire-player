@@ -10,7 +10,7 @@ defineProps<{ node: AmethystInputNode }>();
   <CustomNode
     :node="node"
     title="Input"
-    description="From Saphire"
+    description="From Sapphire"
     :icon="StepIntoIcon"
   />
 </template>

@@ -48,7 +48,7 @@ export class Discord {
 			largeImageKey: format || "blank",
 			largeImageText: format?.toUpperCase() || "Unknown Format",
 			smallImageKey: "logo",
-			smallImageText: `Saphire v${APP_VERSION}\n`,
+			smallImageText: `Sapphire v${APP_VERSION}\n`,
 			buttons: [
 				{
 					label: "Find Song",

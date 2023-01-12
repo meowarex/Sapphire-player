@@ -124,7 +124,7 @@ const refreshWindow = () => location.reload();
         <menu-option
           title="GitHub Repository"
           :icon="GitHubIcon"
-          @click="electron.open('https://github.com/A-T-O-M-I-X/Saphire-player')"
+          @click="electron.open('https://github.com/A-T-O-M-I-X/Sapphire-player')"
         />
         <menu-option
           title="Discord Server"
@@ -157,7 +157,7 @@ const refreshWindow = () => location.reload();
     </div>
 
     <p class="absolute left-1/2 transform-gpu -translate-x-1/2">
-      Saphire v{{ state.state.version }}
+      Sapphire v{{ state.state.version }}
     </p>
 
     <div class="flex gap-1.25 items-center overflow-hidden font-aseprite">

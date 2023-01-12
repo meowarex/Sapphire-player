@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === "production")
 // if (isDebug) 
 // import("electron-debug").then(electronDebug => electronDebug ());
 
-app.setAppUserModelId("Saphire");
+app.setAppUserModelId("Sapphire");
 IS_DEV && app.commandLine.appendSwitch("disable-frame-rate-limit");
 app.commandLine.appendSwitch("js-flags", "--max-old-space-size=1536");
 
