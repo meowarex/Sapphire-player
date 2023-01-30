@@ -244,8 +244,8 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "Geoxor",
-      "repo": "sapphire-player"
+      "owner": "Atomix",
+      "repo": "Sapphire-player"
     }
   },
   "repository": {
