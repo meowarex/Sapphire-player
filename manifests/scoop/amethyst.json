@@ -4,11 +4,11 @@
   "license": "MIT",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/Geoxor/Amethyst/releases/download/v1.8.39/Amethyst-Setup-1.8.39.exe",
+      "url": "https://github.com/A-T-O-M-I-X/Sapphire-player/releases/download/v1.8.39/Amethyst-Setup-1.8.39.exe",
       "extract_dir": "Files\\Amethyst"
     },
     "32bit": {
-      "url": "https://github.com/Geoxor/Amethyst/releases/download/v1.8.39/Amethyst-Setup-1.8.39.exe",
+      "url": "https://github.com/A-T-O-M-I-X/Sapphire-player/releases/download/v1.8.39/Amethyst-Setup-1.8.39.exe",
       "extract_dir": "Files\\Amethyst"
     }
   },

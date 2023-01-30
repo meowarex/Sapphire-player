@@ -60,7 +60,7 @@
   },
   "build": {
     "productName": "Sapphire",
-    "appId": "org.Amethyst",
+    "appId": "org.Sapphire",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "fileAssociations": [

@@ -8,57 +8,57 @@ export default defineConfig({
   locales: {
     '/': {
       lang: 'en-US',
-      title: "Amethyst",
+      title: "Sapphire",
       description: "A powerful node-based audio player written in the Web Platform."
     },
     '/zh/': {
       lang: 'zh-Hans',
-      title: "Amethyst | 紫水晶",
+      title: "Sapphire | 紫水晶",
       description: "一个基于可视化节点和 Electron 的强大音频播放器。"
     },
     '/de/': {
       lang: 'de',
-      title: "Amethyst",
+      title: "Sapphire",
       description: "Ein leistungsstarker Node-basierter Audio Player geschrieben in der Web-Plattform."
     },
     '/el/': {
       lang: 'el-GR',
-      title: "Amethyst | Αμέθυστος",
+      title: "Sapphire | Αμέθυστος",
       description: "Ένα ισχυρό πρόγραμμα αναπαραγωγής ήχου με συστημα κόμβο γραμμένο στην πλατφόρμα Web."
     },
     '/ru/': {
       lang: 'ru',
-      title: "Amethyst | Аметист",
+      title: "Sapphire | Аметист",
       description: "Мощный аудиоплеер на базе node, написанный на web-платформе."
     },
     '/bg/': {
       lang: 'bg',
-      title: "Amethyst | Аметист",
+      title: "Sapphire | Аметист",
       description: "Мощен Node аудио плейър, направен в уеб платформата."
     },
     '/pl/': {
       lang: 'pl',
-      title: "Amethyst | Amethyst",
-      description: "Amethyst to bazujący na Elektronie odtwarzacz audio z węzłowym systemem routingu audio"
+      title: "Sapphire | Sapphire",
+      description: "Sapphire to bazujący na Elektronie odtwarzacz audio z węzłowym systemem routingu audio"
     },
     '/tl/': {
       lang: 'tl',
-      title: "Amethyst | Amethyst",
+      title: "Sapphire | Sapphire",
       description: "Isang malakas na node-based audio player na nakasulat sa Web Platform."
     },
     '/it/': {
       lang: 'it',
-      title: "Amethyst | Ametista",
+      title: "Sapphire | Ametista",
       description: "Un potente lettore audio basato su nodi scritto nella piattaforma Web."
     },
     '/ro/': {
       lang: 'ro',
-      title: "Amethyst | Amethyst",
+      title: "Sapphire | Sapphire",
       description: " Un player audio bazat pe noduri scris pe Platforma Web."
     },
     '/jp/': {
       lang: 'jp',
-      title: "Amethyst | Amethyst",
+      title: "Sapphire | Sapphire",
       description: "Webプラットフォームで記述された強力なノードベースのオーディオプレーヤー。"
     },
   },
@@ -112,8 +112,8 @@ export default defineConfig({
       {
         text: 'File Types',
         items: [
-          { text: 'Amethyst Node Graph (.ang)', link: '/file_types/ang' },
-          { text: 'Amethyst Metadata File (.amf)', link: '/file_types/amf' },
+          { text: 'Sapphire Node Graph (.ang)', link: '/file_types/ang' },
+          { text: 'Sapphire Metadata File (.amf)', link: '/file_types/amf' },
         ]
       },
       {
