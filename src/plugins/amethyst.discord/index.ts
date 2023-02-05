@@ -2,8 +2,8 @@ import type { Presence } from "discord-rpc";
 import { Client } from "discord-rpc";
 import { APP_VERSION } from "../../main/mainWindow";
 
-const DISCORD_CLIENT_ID = "976036303156162570"; 
- //Hello if u see this u are gay
+const DISCORD_CLIENT_ID = "1071679030153191454"; 
+
 export type FormatIcons = "aiff" | "flac" | "mpeg" | "ogg" | "wave";
 
 export class Discord {
@@ -45,14 +45,14 @@ export class Discord {
 		this.connected.then(check => check && !this.destroyed && this.updateRichPresence({
 			state: `${seek} - ${duration}`,
 			details: title,
-			largeImageKey: format || "blank",
-			largeImageText: format?.toUpperCase() || "Unknown Format",
-			smallImageKey: "logo",
-			smallImageText: `Sapphire v${APP_VERSION}\n`,
+			largeImageKey: "logo",
+			largeImageText: `Sapphire v${APP_VERSION}\n`,
+			smallImageKey: format || "blank",
+			smallImageText: format?.toUpperCase() || "Unknown Format",
 			buttons: [
 				{
-					label: "Find Song",
-					url: encodeURI(`https://www.youtube.com/results?search_query=${title}`),
+					label: "Download Sapphire",
+					url: "https://atomix.one/sapphire/",
 				},
 			],
 		}));
