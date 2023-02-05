@@ -7,15 +7,20 @@ import { useState } from "@/amethyst";
 const props = defineProps<{ node: AudioNode }>();
 let shouldStopRendering = false;
 
-const threeCanvas = ref() as Ref<HTMLCanvasElement>;
-onMounted(async () => {
-  if(!threeCanvas.value) return;
-
+const getDimensions = () => {
   const containerWidth = threeCanvas.value.parentElement!.getBoundingClientRect().width;
   const containerHeight = threeCanvas.value.parentElement!.getBoundingClientRect().height;
 
   const width = containerWidth * 4;
   const height = containerHeight * 4;
+  return {width, height};
+};
+
+const threeCanvas = ref() as Ref<HTMLCanvasElement>;
+onMounted(async () => {
+  if(!threeCanvas.value) return;
+
+  const {width, height} = getDimensions();
 
   const cube = (width: number = 1.0, offset: number = 1.0): THREE.Vector2[] => {
   const vertices: THREE.Vector2[] = [];
@@ -89,7 +94,9 @@ onMounted(async () => {
     wireframe: false,
     transparent: true,
     uniforms: uniformData,
+    // @ts-ignore
     fragmentShader: await loader.loadAsync(new URL("./SpectrumFrag.glsl", import.meta.url).toString()) as string,
+    // @ts-ignore
     vertexShader: await loader.loadAsync(new URL("./SpectrumVertex.glsl", import.meta.url).toString()) as string,
   });
 
@@ -101,6 +108,14 @@ onMounted(async () => {
   renderer.setSize(width, height);
   renderer.setClearColor( 0x000000, 0 ); // the default
   
+  const resizeObserver = new ResizeObserver(() => {
+    const {width, height} = getDimensions();
+    renderer.setSize(width, height);
+
+  });
+
+  resizeObserver.observe(threeCanvas.value.parentElement!);
+
   // animation
   const context = props.node.context;
   const analyser = context.createAnalyser();

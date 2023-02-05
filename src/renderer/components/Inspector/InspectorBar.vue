@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useElectron, useState } from "@/amethyst";
+import { useElectron } from "@/amethyst";
 import { CloseIcon } from "@/icons/fluency";
 import { AudioFileIcon, ExternalLinkIcon, ImageIcon, ListIcon, PlaystationButtonsIcon, BinocularsIcon, LoadingIcon } from "@/icons/material";
 import ResetIcon from "@/icons/material/ResetIcon.vue";
@@ -10,11 +10,10 @@ import { bytesToHuman } from "@shared/formating";
 import { computed, onMounted, onUnmounted } from "vue";
 import { useInspector, getInspectableItemType } from ".";
 import BaseChip from "../BaseChip.vue";
+import { useContextMenu } from "../ContextMenu";
 import CoverArt from "../CoverArt.vue";
 const inspector = useInspector();
 const currentItem = computed(() => inspector.state.currentItem);
-const state = useState();
-
 const handlePlay = (track: Track) => {
   inspector.inspect(track);
 };
@@ -34,8 +33,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    :class="state.settings.showSettings ? 'right-66' : 'right-2'"
-    class="inspector absolute text-12px top-2 overflow-hidden w-min-64 rounded-4px z-30 text-primary-900 border-1 bg-surface-1000 border-surface-600"
+    class="inspector absolute text-12px top-2 right-2 overflow-hidden w-min-64 rounded-4px z-30 text-primary-900 border-1 border-surface-600 bg-surface-1000"
   >
     <div class="h-10 pl-3 flex w-full borderBottom justify-between items-center">
       <div class="flex gap-2 items-center">
@@ -111,6 +109,9 @@ onUnmounted(() => {
           <CoverArt 
             class="w-16 rounded-4px"
             :url="currentItem.getCoverByFace(i)"
+            @contextmenu="useContextMenu().open({x: $event.x, y: $event.y}, [
+              { title: 'Export cover...', icon: ExternalLinkIcon, action: () => currentItem.exportCover(i) },
+            ]);"
           />
           <div class="flex flex-col gap-1 w-full">
             <li class="flex justify-between gap-2">
@@ -226,7 +227,7 @@ section {
   @apply border-b-1 border-b-surface-600 border-t-transparent border-r-transparent border-l-transparent;
 
   & button {
-    @apply bg-surface-800 mt-2 items-center flex justify-center gap-2 w-full hover:bg-primary-800 hover:bg-opacity-10 hover:text-primary-800 rounded-4px py-1.5;
+    @apply bg-surface-800 mt-2 items-center flex justify-center gap-2 w-full hover:bg-purple-400 hover:bg-opacity-10 hover:text-purple-400 rounded-4px py-1.5;
   }
 
   &:hover {
@@ -247,7 +248,7 @@ section {
     }
   }
   & > h1 {
-    @apply text-primary-800 pb-2 flex gap-2 items-center;
+    @apply text-purple-400 pb-2 flex gap-2 items-center;
   }
 
   & input,
@@ -259,10 +260,10 @@ section {
   input {
     @apply border-1 border-transparent;
     &:hover {
-      @apply bg-primary-800 bg-opacity-25 text-white;
+      @apply bg-purple-400 bg-opacity-25 text-white;
     }
     &:focus {
-      @apply bg-primary-800 bg-opacity-25 border-1 border-primary-800 text-white;
+      @apply bg-purple-400 bg-opacity-25 border-1 border-purple-400 text-white;
     }
   }
 }

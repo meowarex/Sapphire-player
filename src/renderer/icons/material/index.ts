@@ -1,4 +1,5 @@
 import AdjustIcon from "./AdjustIcon.vue";
+import GeometryIcon from "./GeometryIcon.vue";
 import AzimuthIcon from "./AzimuthIcon.vue";
 import BookshelfIcon from "./BookshelfIcon.vue";
 import CircleToggleIcon from "./CircleToggleIcon.vue";
@@ -9,7 +10,9 @@ import HeartIcon from "./HeartIcon.vue";
 import ListIcon from "./ListIcon.vue";
 import MagnetIcon from "./MagnetIcon.vue";
 import MasterIcon from "./MasterIcon.vue";
+import PuzzleIcon from "./PuzzleIcon.vue";
 import MyLocationIcon from "./MyLocationIcon.vue";
+import PaintBrushIcon from "./PaintBrushIcon.vue";
 import PlaystationButtonsIcon from "./PlaystationButtonsIcon.vue";
 import RemoveIcon from "./RemoveIcon.vue";
 import RenameIcon from "./RenameIcon.vue";
@@ -31,6 +34,7 @@ import ResizeIcon from "./ResizeIcon.vue";
 import HideIcon from "./HideIcon.vue";
 import DownloadingUpdatesIcon from "./DownloadingUpdatesIcon.vue";
 import PlayIcon from "./PlayIcon.vue";
+import CircusRingOfFireIcon from "./CircusRingOfFireIcon.vue";
 import ErrorIcon from "./ErrorIcon.vue";
 import ExternalLinkIcon from "./ExternalLinkIcon.vue";
 import BinocularsIcon from "./BinocularsIcon.vue";
@@ -59,6 +63,7 @@ export {
   RenameIcon,
   ResetIcon,
   RemoveIcon,
+  CircusRingOfFireIcon,
   DisconnectIcon,
   AzimuthIcon,
   BookshelfIcon,
@@ -66,6 +71,7 @@ export {
   FilterIcon,
   HeartIcon,
   ListIcon,
+  GeometryIcon,
   MasterIcon,
   MyLocationIcon,
   PlaystationButtonsIcon,
@@ -74,4 +80,6 @@ export {
   StepIntoIcon,
   StepOutIcon,
   WaveIcon,
+  PuzzleIcon,
+  PaintBrushIcon
 };

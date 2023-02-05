@@ -19,7 +19,8 @@ const handleContextMenu = ({x, y}: MouseEvent, track: Track) => {
   useContextMenu().open({x, y}, [
     { title: "Play", icon: PlayIcon, action: () => player.play(track) },
     { title: "Inspect", icon: BinocularsIcon, action: () => useInspector().inspectAndShow(track) },
-    { title: "Open in Explorer...", icon: ExternalLinkIcon, action: () => invoke("show-item", [track.path]) },
+    { title: "Show in Explorer...", icon: ExternalLinkIcon, action: () => invoke("show-item", [track.path]) },
+    { title: "Export cover...", icon: ExternalLinkIcon, action: () => track.exportCover() },
     { title: "Reload metadata", icon: ResetIcon, action: () => track.fetchAsyncData(true) },
     { title: "Remove from queue", icon: RemoveIcon, red: true, action: () => player.queue.remove(track) },
   ]);
@@ -67,7 +68,8 @@ const handleContextMenu = ({x, y}: MouseEvent, track: Track) => {
           :class="[
             isHoldingControl && 'control cursor-external-pointer', 
             item.hasErrored && 'opacity-50 not-allowed',
-            player.getCurrentTrack()?.path == item.path && 'active'
+            player.getCurrentTrack()?.path == item.path && 'currentlyPlaying',
+            useInspector().state.isVisible && useInspector().state.currentItem == item && 'currentlyInspecting'
           ]"
           class="row"
           @contextmenu="handleContextMenu($event, item)"
@@ -92,8 +94,16 @@ const handleContextMenu = ({x, y}: MouseEvent, track: Track) => {
               :url="(item.isLoaded ? item.getCover() : state.state.defaultCover) as string"
             />
           </div>
-          <div class="td min-w-1/4">
-            {{ player.getCurrentTrack()?.path == item.path ? "⏵ " : "" }}{{ item.getFilename() }}
+          <div
+            class="td flex gap-1 min-w-1/4"
+          >
+            {{ player.getCurrentTrack()?.path == item.path ? "⏵ " : "" }}
+            <BinocularsIcon
+              v-if="useInspector().state.isVisible && useInspector().state.currentItem == item"
+              class="w-3 h-3"
+            />
+            
+            {{ item.getFilename() }}
           </div>
           <div class="td">
             <span v-if="item.getArtistsFormatted()">
@@ -176,8 +186,12 @@ const handleContextMenu = ({x, y}: MouseEvent, track: Track) => {
     @apply underline;
   } 
 
-  &.active:not(:hover) {
+  &.currentlyPlaying:not(:hover) {
     @apply text-primary-800;
+  }
+
+  &.currentlyInspecting:not(:hover) {
+    @apply text-purple-400;
   }
 }
 

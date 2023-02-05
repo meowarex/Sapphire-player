@@ -2,7 +2,6 @@
 import { useState } from "@/amethyst";
 import TopBar from "@/components/TopBar.vue";
 import {InspectorBar, useInspector} from "@/components/Inspector";
-import SettingsBar from "@/components/SettingsBar.vue";
 import DbMeter from "@/components/visualizers/DbMeter.vue";
 import NavigationBar from "@/components/NavigationBar.vue";
 import PlaybackButtons from "@/components/PlaybackButtons.vue";
@@ -15,13 +14,15 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { Track } from "@/logic/track";
 import { player } from "@/logic/player";
 import { CloseIcon } from "./icons/fluency";
+import NavigationButton from "@/components/NavigationButton.vue";
+import { ListIcon, SettingsIcon, SelectNoneIcon, PlaystationButtonsIcon, BinocularsIcon } from "@/icons/material";
+import LoudnessMeter from "./components/visualizers/LoudnessMeter.vue";
 
 const state = useState();
 const ambientBackgroundImage = ref("");
 
 const setAmbientCover = async (track: Track) => {
-  const cover = (await track.fetchMetadata(true))?.common.picture?.[0];
-  cover && (ambientBackgroundImage.value = URL.createObjectURL(new Blob([new Uint8Array(cover.data)], { type: "image/png" })));
+  (ambientBackgroundImage.value = URL.createObjectURL(await track.getCoverAsBlob()));
 };
 
 onMounted(() => {
@@ -37,11 +38,32 @@ onUnmounted(() => {
 <template>
   <div class="flex fixed flex-col bg-surface-900">
     <div
+      class="absolute select-none rounded-8px h-3/4 overflow-hidden top-1/2 left-1/2 transform-gpu -translate-x-1/2 -translate-y-1/2 z-50"
+    >
+      <cover-art 
+        v-if="state.state.isShowingBigCover"
+        :url="ambientBackgroundImage"
+        class="h-full"
+        @contextmenu="useContextMenu().open({x: $event.x, y: $event.y}, [
+          { title: 'Export cover...', icon: ExternalLinkIcon, action: () => player.getCurrentTrack()?.exportCover() },
+        ]);"
+      />
+
+      <button
+        class="p-3 absolute top-1 right-1 cursor-pointer hover:text-white"
+        @click="state.state.isShowingBigCover = false"
+      >
+        <CloseIcon class="w-4 h-4" />
+      </button>
+    </div>
+
+    <div
       v-if="state.settings.showAmbientBackground"
       :style="`
         transform: translate(-50%, -50%) scale(${state.settings.ambientBackgroundZoom}%);
+        mix-blend-mode: ${state.settings.ambientBackgroundBlendMode};
       `"
-      class="absolute z-1000 select-none mix-blend-soft-light pointer-events-none top-1/2 transform-gpu -translate-y-1/2 left-1/2 -translate-x-1/2 w-full"
+      class="absolute z-1000 select-none pointer-events-none top-1/2 transform-gpu -translate-y-1/2 left-1/2 -translate-x-1/2 w-full"
     >
       <cover-art 
         class="w-full h-full" 
@@ -51,7 +73,7 @@ onUnmounted(() => {
         :style="`
         animation-duration: ${state.settings.ambientBackgroundSpinSpeed}s;
         opacity: ${state.settings.ambientBackgroundOpacity}%;
-        filter: blur(${state.settings.abmientBackgroundBlurStrength}px);
+        filter: blur(${state.settings.ambientBackgroundBlurStrength}px);
       `"
         :url="ambientBackgroundImage"
       />
@@ -60,32 +82,97 @@ onUnmounted(() => {
     <context-menu v-if="useContextMenu().state.isVisible" />
     <div class="h-full whitespace-nowrap flex flex-col justify-between overflow-hidden">
       <div class="flex-1 flex h-full max-h-full relative overflow-hidden">
-        <navigation-bar />
+        <navigation-bar>
+          <navigation-button
+            :icon="SelectNoneIcon"
+            :active="$route.name == 'node-editor'"
+            @click="$router.push({ name: 'node-editor' })"
+          />
+
+          <navigation-button
+            :icon="ListIcon"
+            :active="$route.name == 'queue'"
+            @click="$router.push({ name: 'queue' })"
+          />
+
+          <!-- <navigation-button
+      :icon="BookshelfIcon"
+      :active="$route.name == 'library'"
+      @click="$router.push({name: 'library'})"
+    /> -->
+
+          <navigation-button
+            v-if="state.isDev.value"
+            :icon="PlaystationButtonsIcon"
+            :active="$route.name == 'playground'"
+            @click="$router.push({ name: 'playground' })"
+          />
+
+          <div class="flex-1" />
+          <navigation-button
+            :icon="BinocularsIcon"
+            :active="useInspector().state.isVisible"
+            @click="useInspector().state.isVisible = !useInspector().state.isVisible"
+          />
+
+          <navigation-button
+            :icon="SettingsIcon"
+            :active="$route.name?.toString().startsWith('settings') || false"
+      
+            @click="$router.push({ name: 'settings' })"
+          />
+        </navigation-bar>
         <div class="flex flex-col w-full">
           <router-view class="overflow-hidden" />
           <div
-            v-if="state.settings.showBigSpectrum && player.source"
-            class="p-2 pt-0 relative"
+            class="flex justify-end w-full gap-2"
+            :class="[(state.settings.showBigSpectrum || state.settings.showBigVectorscope) && 'p-2']"
           >
-            <button
-              class="p-3 absolute z-10 top-1 right-3 cursor-pointer text-primary-1000 hover:text-white"
-              @click="state.settings.showBigSpectrum = false"
+            <div
+              v-if="state.settings.showBigSpectrum && player.source"
+              class="w-full relative"
             >
-              <CloseIcon class="w-4 h-4" />
-            </button>
-            <SpectrumAnalyzer
+              <button
+                class="p-3 absolute z-10 top-1 right-3 cursor-pointer text-primary-1000 hover:text-white"
+                @click="state.settings.showBigSpectrum = false"
+              >
+                <CloseIcon class="w-4 h-4" />
+              </button>
+              <SpectrumAnalyzer
               
-              :key="player.nodeManager.getNodeConnectinsString()"
-              class="h-64 min-h-64 w-full bg-surface-1000"
-              :node="player.nodeManager.master.audioNode"
-              @contextmenu="useContextMenu().open({x: $event.x, y: $event.y}, [
-                { title: 'Hide', icon: HideIcon, action: () => state.settings.showBigSpectrum = false },
-              ]);"
-            />
+                :key="player.nodeManager.getNodeConnectinsString()"
+                class="h-64 min-h-64 w-full bg-surface-1000"
+                :node="player.nodeManager.master.audioNode"
+                @contextmenu="useContextMenu().open({x: $event.x, y: $event.y}, [
+                  { title: 'Hide', icon: HideIcon, action: () => state.settings.showBigSpectrum = false },
+                ]);"
+              />
+            </div>
+
+            <div
+              v-if="state.settings.showBigVectorscope && player.source"
+              class="relative"
+            >
+              <button
+                class="p-3 absolute z-10 top-1 right-3 cursor-pointer text-primary-1000 hover:text-white"
+                @click="state.settings.showBigVectorscope = false"
+              >
+                <CloseIcon class="w-4 h-4" />
+              </button>
+              <Vectorscope
+                :key="player.nodeManager.getNodeConnectinsString()"
+                :width="256"
+                :height="256"
+                class="h-64 w-64 bg-surface-1000"
+                :node="player.nodeManager.master.audioNode"
+                @contextmenu="useContextMenu().open({x: $event.x, y: $event.y}, [
+                  { title: 'Hide', icon: HideIcon, action: () => state.settings.showBigVectorscope = false },
+                ]);"
+              />
+            </div>
           </div>
         </div>
         <inspector-bar v-if="useInspector().state.isVisible" />
-        <settings-bar v-if="state.settings.showSettings" />
       </div>
 
       <div
@@ -102,20 +189,32 @@ onUnmounted(() => {
           ]);"
         />
 
+        <loudness-meter 
+          v-if="state.settings.showLoudnessMeter && player.source"
+          :key="player.nodeManager.getNodeConnectinsString()"
+          :node="player.nodeManager.master.audioNode"
+        />
+
+        <playback-buttons :player="player" />
         <vectorscope
           v-if="state.settings.showVectorscope && player.source"
           :key="player.nodeManager.getNodeConnectinsString()"
           :node="player.nodeManager.master.audioNode"
+          :width="76"
+          :height="76"
+          class="clickable"
+          :class="[
+            state.settings.showBigVectorscope && 'border-primary-700 bg-primary-700 bg-opacity-10 hover:bg-opacity-20'
+          ]"
           @contextmenu="useContextMenu().open({x: $event.x, y: $event.y}, [
             { title: 'Hide Vectorscope', icon: HideIcon, action: () => state.settings.showVectorscope = false },
           ]);"
+          @click="state.settings.showBigVectorscope = !state.settings.showBigVectorscope"
         />
-
-        <playback-buttons :player="player" />
         <SpectrumAnalyzer
           v-if="state.settings.showSpectrum && player.source"
           :key="player.nodeManager.getNodeConnectinsString()"
-          class="h-76px w-152px min-h-76px min-w-152px cursor-pointer border-1 border-transparent hover:bg-primary-700 hover:bg-opacity-10"
+          class="clickable h-76px w-152px min-h-76px min-w-152px "
           :class="[
             state.settings.showBigSpectrum && 'border-primary-700 bg-primary-700 bg-opacity-10 hover:bg-opacity-20'
           ]"
@@ -248,6 +347,10 @@ body,
 
 .no-drag {
   -webkit-app-region: no-drag;
+}
+
+.clickable {
+  @apply cursor-pointer border-1 border-transparent hover:bg-primary-700 hover:bg-opacity-10;
 }
 
 </style>

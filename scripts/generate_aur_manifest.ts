@@ -10,11 +10,11 @@ try {
 }
 
 fs.writeFileSync("./manifests/aur/.SRCINFO", `
-pkgbase = sapphire-player
+pkgbase = amethyst-player
 pkgdesc = ${description}
 pkgver = ${version}
 pkgrel = 1
-url = https://github.com/A-T-O-M-I-X/Sapphire-Player
+url = https://github.com/Geoxor/amethyst
 arch = x86_64
 license = ${license}
 makedepends = gcc-multilib
@@ -22,10 +22,10 @@ makedepends = git
 makedepends = gendesk
 makedepends = yarn
 makedepends = libxcrypt-compat
-source = git+https://github.com/A-T-O-M-I-X/Sapphire-Player
+source = git+https://github.com/Geoxor/amethyst/#tag=v${version}
 md5sums = SKIP
 
-pkgname = sapphire-player
+pkgname = amethyst-player
 `);
 
 console.log(chalk.bgCyan("[AUR Manifest]"), chalk.cyan("Generated .SRCINFO"));
@@ -45,12 +45,12 @@ source=("git+https://github.com/Geoxor/$appname/#tag=v$pkgver")
 md5sums=('SKIP')
 
 logo() {
-	echo ""
-	echo " "
-	echo " "
-	echo " "
-	echo " "
-	echo " "
+	echo "    ___                   __  __               __ "
+	echo "   /   |  ____ ___  ___  / /_/ /_  __  _______/ /_"
+	echo "  / /| | / __ \\\`__ \\\\/ _ \\\\/ __/ __ \\\\/ / / / ___/ __/"
+	echo " / ___ |/ / / / / /  __/ /_/ / / / /_/ (__  ) /_  "
+	echo "/_/  |_/_/ /_/ /_/\\\\___/\\\\__/_/ /_/\\\\__, /____/\\\\__/  "
+	echo "                                /____/"
 }
 
 prepare(){

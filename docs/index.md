@@ -48,7 +48,7 @@ head:
       content: site_preview.png
   - - meta
     - property: og:url
-      content: https://github.com/Geoxor/amethyst
+      content: https://github.com/A-T-O-M-I-X/Sapphire-player
   - - meta
     - name: title
       content: Amethyst

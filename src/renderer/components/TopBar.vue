@@ -6,7 +6,7 @@ import Menu from "@/components/menu/MenuContainer.vue";
 import MenuOption from "@/components/menu/MenuOption.vue";
 import MenuSplitter from "@/components/menu/MenuSplitter.vue";
 import ProcessorUsageMeter from "@/components/ProcessorUsageMeter.vue";
-import { AudioFileIcon, DiscordIcon, GitHubIcon, MusicFolderIcon, ResetIcon, ZoomInIcon, ZoomOutIcon, RemoveIcon, ResizeIcon, SettingsIcon, BookshelfIcon } from "@/icons/material";
+import { AudioFileIcon, DiscordIcon, GitHubIcon, MusicFolderIcon, ResetIcon, ZoomInIcon, ZoomOutIcon, RemoveIcon, ResizeIcon, DownloadingUpdatesIcon, SettingsIcon, BookshelfIcon } from "@/icons/material";
 import { useFps } from "@vueuse/core";
 import { player } from "@/logic/player";
 import AmethystLogo from "@/icons/AmethystLogo.vue";
@@ -105,7 +105,7 @@ const refreshWindow = () => location.reload();
         <menu-option
           title="Settings"
           :icon="SettingsIcon"
-          @click="state.settings.showSettings = !state.settings.showSettings"
+          @click="$router.push({ name: 'settings.appearance' })"
         />
         <menu-option
           title="Show dev tools"
@@ -129,7 +129,7 @@ const refreshWindow = () => location.reload();
         <menu-option
           title="Discord Server"
           :icon="DiscordIcon"
-          @click="electron.open('https://discord.gg/tVRTWB9NCc')"
+          @click="electron.open('https://discord.gg/azFB7j54NN')"
         />
       </Menu>
       <Menu
@@ -168,8 +168,8 @@ const refreshWindow = () => location.reload();
         <div 
           :class="[
             fps < 30 && 'text-rose-500',
-            fps >= 30 && fps < 155 && 'text-yellow-300',
-            fps >= (155*0.8) && 'text-green-500',
+            fps >= 30 && fps < max && 'text-yellow-300',
+            fps >= (max*0.8) && 'text-green-500',
           ]"
           class="font-aseprite"
         >
