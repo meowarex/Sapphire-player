@@ -1,0 +1,160 @@
+name: Build Sapphire
+
+on:
+  push:
+    paths-ignore:
+      - "**/*.md"
+  pull_request_target:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Check for lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 19.1.0
+          cache: 'yarn'
+
+      - name: Install gcc dependencies
+        run: sudo apt install gcc-multilib g++-multilib libvips
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Run eslint
+        run: yarn lint
+
+  tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 19.1.0
+          cache: 'yarn'
+
+      - name: Install gcc dependencies
+        run: sudo apt install gcc-multilib g++-multilib libvips
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Run Tests
+        run: npm test
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 19.1.0
+          cache: 'yarn'
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build Sapphire
+        run: yarn package
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            release/build/*.yml
+            release/build/*.yaml
+            release/build/*.exe*
+  build-macos:
+    name: Build MacOS
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 19.1.0
+          cache: 'yarn'
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build Sapphire
+        run: USE_HARD_LINKS=false yarn package
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            release/build/*.yml
+            release/build/*.dmg
+            release/build/*.dmg.*
+            release/build/*.zip
+            release/build/*.zip.*
+  # build-linux:
+  #   name: Build Linux
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         submodules: recursive
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 19.1.0
+  #         cache: 'yarn'
+
+  #     - name: Install linux dependencies
+  #       run: sudo apt install rpm snapd libarchive-tools && sudo snap install snapcraft --classic && sudo snap install multipass --beta --classic
+
+  #     - name: Install Dependencies
+  #       run: yarn install
+
+  #     - name: Build Sapphire
+  #       run: yarn package
+
+  #     - name: Upload Artifacts
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         path: |
+  #           release/build/*.yml
+  #           release/build/*.yaml
+  #           release/build/*.AppImage
+  #           release/build/*.rpm
+  #           release/build/*.deb
+  #           release/build/*.pacman
+  #           release/build/*.snap
+
+  publish-releases:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-windows, build-macos, lint, tests]
+    name: Publish Releases
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artifact
+
+      - name: Post Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./*"
