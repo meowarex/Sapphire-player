@@ -24,7 +24,7 @@ jobs:
         run: sudo apt-get update --fix-missing
         
       - name: Install gcc dependencies
-        run: sudo apt install gcc-multilib g++-multilib libvips
+        run: sudo apt install gcc-multilib g++-multilib libvips --fix-missing
 
       - name: Install Dependencies
         run: yarn install
@@ -48,7 +48,7 @@ jobs:
         run: sudo apt-get update --fix-missing
 
       - name: Install gcc dependencies
-        run: sudo apt install gcc-multilib g++-multilib libvips
+        run: sudo apt install gcc-multilib g++-multilib libvips --fix-missing
 
       - name: Install Dependencies
         run: yarn install
@@ -130,7 +130,7 @@ jobs:
          run: sudo apt-get update --fix-missing
 
        - name: Install linux dependencies
-         run: sudo apt install rpm snapd libarchive-tools && sudo snap install snapcraft --classic && sudo snap install multipass --beta --classic
+         run: sudo apt install rpm snapd libarchive-tools && sudo snap install snapcraft --classic && sudo snap install multipass --beta --classic --fix-missing
 
        - name: Install Dependencies
          run: yarn install
