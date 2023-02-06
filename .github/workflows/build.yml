@@ -19,7 +19,10 @@ jobs:
         with:
           node-version: 19.1.0
           cache: 'yarn'
-
+          
+      - name: Install Updates
+        run: sudo apt-get update --fix-missing
+        
       - name: Install gcc dependencies
         run: sudo apt install gcc-multilib g++-multilib libvips
 
@@ -40,6 +43,9 @@ jobs:
         with:
           node-version: 19.1.0
           cache: 'yarn'
+          
+      - name: Install Updates
+        run: sudo apt-get update --fix-missing
 
       - name: Install gcc dependencies
         run: sudo apt install gcc-multilib g++-multilib libvips
@@ -119,6 +125,9 @@ jobs:
          with:
            node-version: 19.1.0
            cache: 'yarn'
+           
+       - name: Install Updates
+         run: sudo apt-get update --fix-missing
 
        - name: Install linux dependencies
          run: sudo apt install rpm snapd libarchive-tools && sudo snap install snapcraft --classic && sudo snap install multipass --beta --classic
