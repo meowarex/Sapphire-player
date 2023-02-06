@@ -1,4 +1,4 @@
-name: Build Amethyst
+name: Build Sapphire
 
 on:
   push:
