@@ -4864,22 +4864,22 @@ stackback@0.0.2:
   resolved "https://registry.yarnpkg.com/stackback/-/stackback-0.0.2.tgz#1ac8a0d9483848d1695e418b6d031a3c3ce68e3b"
   integrity sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==
 
-standardized-audio-context-mock@^9.6.11:
-  version "9.6.11"
-  resolved "https://registry.yarnpkg.com/standardized-audio-context-mock/-/standardized-audio-context-mock-9.6.11.tgz#9766156177da7ec9fd42e8c1fd4bee0813ac6f2d"
-  integrity sha512-csMSLCmrocY27dxQhk1mJTxAS826+FpPtvXJr2UYw2CSzegmNQ0SwyWPL6fZg+xb9ZdXBAkjS7s9I0LpAwEMYA==
+standardized-audio-context-mock@^9.6.12:
+  version "9.6.12"
+  resolved "https://registry.yarnpkg.com/standardized-audio-context-mock/-/standardized-audio-context-mock-9.6.12.tgz#229a12d6261ad01167196067436d7d9bc8a8b09a"
+  integrity sha512-V4aXoQehkAQMtmZOBYc/5ZfYdLSkCjaD715FDcvPomjS9DwxQUGU04/OCu+arYobkJImKUysVaZr45D9WJ/h8Q==
   dependencies:
     "@babel/runtime" "^7.20.13"
     automation-events "^5.0.1"
     sinon "^15.0.1"
-    standardized-audio-context "^25.3.38"
+    standardized-audio-context "^25.3.39"
     tslib "^2.5.0"
     vehicles "^8.0.1"
 
-standardized-audio-context@^25.3.38:
-  version "25.3.38"
-  resolved "https://registry.yarnpkg.com/standardized-audio-context/-/standardized-audio-context-25.3.38.tgz#c8f34cfb92538a8acde48981e417542e85ccb898"
-  integrity sha512-Z9hRSOEjY2Vr6v8XlwDDa8iIDa2rV70XB6Hw12E+/wiIZATUzLV9S2R/vpV8Wc9Rgf94Z9QpXTBMxP9f+4Xh0A==
+standardized-audio-context@^25.3.39:
+  version "25.3.39"
+  resolved "https://registry.yarnpkg.com/standardized-audio-context/-/standardized-audio-context-25.3.39.tgz#97f6f420eb235bd8ed5f139802e336acc698ecca"
+  integrity sha512-oBP5VQgEVLEfF12Wha65bMN3yk/VM2EzsPtC8Bao3cEmvJBcvocZ9OEHLSU00tCOjfJtBvGjFyqdb+nSHQNuyQ==
   dependencies:
     "@babel/runtime" "^7.20.13"
     automation-events "^5.0.1"
