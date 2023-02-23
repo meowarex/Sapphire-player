@@ -1004,12 +1004,12 @@
     d3-selection "^3.0.0"
     d3-zoom "^3.0.0"
 
-"@vue-flow/core@^1.14.3":
-  version "1.14.3"
-  resolved "https://registry.yarnpkg.com/@vue-flow/core/-/core-1.14.3.tgz#2744fff00395013ab9415648a3626fd2a94c6b76"
-  integrity sha512-KvqKH9o17coY33LSuQ0xaHFycPkQF0CTL/+FPNUZtQlrkFIrEliWvqbDEV82HGrcdeF7r0voJ69O+htoNUWpSA==
+"@vue-flow/core@^1.15.1":
+  version "1.15.1"
+  resolved "https://registry.yarnpkg.com/@vue-flow/core/-/core-1.15.1.tgz#79ae3848087de5872b90f5d230430c6f679521a1"
+  integrity sha512-wmYi3Bd0sm2Ow06PscZn4k4ysy5giU3IjdVMx7KH3cgIbU1uF7MBVZ9IUbBE4k5qHliP+olh5wZPKGX1v7dElg==
   dependencies:
-    "@vueuse/core" "^9.11.0"
+    "@vueuse/core" "^9.13.0"
     d3-drag "^3.0.0"
     d3-selection "^3.0.0"
     d3-zoom "^3.0.0"
@@ -1123,7 +1123,7 @@
   resolved "https://registry.yarnpkg.com/@vue/test-utils/-/test-utils-2.2.7.tgz#0d93d635031a4cca2de70b825aef3fe20a41e702"
   integrity sha512-BMuoruUFTEqhLoOgsMcgNVMiByYbfHCKGr2C4CPdGtz/affUtDVX5zr1RnPuq0tYSiaqq+Enw5voUpG6JY8Q7g==
 
-"@vueuse/core@^9.11.0", "@vueuse/core@^9.12.0", "@vueuse/core@^9.13.0":
+"@vueuse/core@^9.12.0", "@vueuse/core@^9.13.0":
   version "9.13.0"
   resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-9.13.0.tgz#2f69e66d1905c1e4eebc249a01759cf88ea00cf4"
   integrity sha512-pujnclbeHWxxPRqXWmdkKV5OX4Wk4YeK7wusHqRwU0Q7EFusHoqNA/aPhB6KCh9hEqJkLAJo7bb0Lh9b+OIVzw==
