@@ -1021,10 +1021,10 @@
     d3-selection "^3.0.0"
     d3-zoom "^3.0.0"
 
-"@vue-flow/core@^1.15.4":
-  version "1.15.4"
-  resolved "https://registry.yarnpkg.com/@vue-flow/core/-/core-1.15.4.tgz#45be8c2f7e7fcb3fac420a9341169f7d84d65f66"
-  integrity sha512-6XpkO0mGMynk4tr5M80VXvaDqnnFGRDJXE/9/Ze4/Zbk9sCtY3OX0/PHMtIvl3qiVGuSa5lCOM0+FmoutLJH7w==
+"@vue-flow/core@^1.16.2":
+  version "1.16.2"
+  resolved "https://registry.yarnpkg.com/@vue-flow/core/-/core-1.16.2.tgz#4fee790c0dee0eb01e11d2a82aca7528bbc42525"
+  integrity sha512-xcndgX+AE0SlIeyDiDola1dN5L4Sp7CAu/RhaUpQJymmMLdltCv8SPJCbAfw97YJGcqIMQb9EB+hENgiX/F/JA==
   dependencies:
     "@vueuse/core" "^9.13.0"
     d3-drag "^3.0.0"
