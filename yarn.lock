@@ -614,10 +614,10 @@
   dependencies:
     "@types/ms" "*"
 
-"@types/discord-rpc@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@types/discord-rpc/-/discord-rpc-4.0.3.tgz#3ff5bf9d406841e3744575df0a9e967f52df1ccb"
-  integrity sha512-4Kh+8u1+OXRHD5OHET3zbBInDkx3cMLaj8Qif8JQbgHZjiru2IYf/WHhuYdzjgtJ/J0CuImOpvt98+Bhe/lr1g==
+"@types/discord-rpc@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@types/discord-rpc/-/discord-rpc-4.0.4.tgz#60bace6f80f512e1efc72aba281e6cc027b2a2cb"
+  integrity sha512-Afr+3GqUqZnQ6bA/WzNp388heVAmfKuNxy6giAde2ZZP7sNr6mnl+ELpcecD/z2sndfKSauLB89ABNqjWWCZlg==
 
 "@types/file-saver@^2.0.5":
   version "2.0.5"
@@ -5415,7 +5415,7 @@ vite-plugin-windicss@^1.8.10:
     kolorist "^1.6.0"
     windicss "^3.5.6"
 
-"vite@^3.0.0 || ^4.0.0", vite@^4.1.4, vite@^4.2.1:
+"vite@^3.0.0 || ^4.0.0", vite@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/vite/-/vite-4.2.1.tgz#6c2eb337b0dfd80a9ded5922163b94949d7fc254"
   integrity sha512-7MKhqdy0ISo4wnvwtqZkjke6XN4taqQ2TBaTccLIpOKv7Vp2h4Y+NpmWCnGDeSvvn45KxvWgGyb0MkHvY1vgbg==
