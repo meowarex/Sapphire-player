@@ -5524,10 +5524,10 @@ watchboy@^0.4.3:
     pify "^4.0.1"
     unixify "^1.0.0"
 
-wavesurfer.js@^6.6.0:
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-6.6.0.tgz#5e0ac6a0e75acfb3f3de87394b4dbfe31ff6d64a"
-  integrity sha512-e+1mdjeLNQoZhZqrOV7e13OkCVilYc9JfcGJu7SxuMZAwHUgpUQH9h3ci3KUEIPV4jTTCvmddcBetrHmv3axgw==
+wavesurfer.js@^6.6.1:
+  version "6.6.1"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-6.6.1.tgz#335d0619eab0dcff4c5a6de731833435d9a2d473"
+  integrity sha512-J3Zxm9t6gOueHVH0/lToFyiEoWi7s5W1iUoS6GRJKQr7Jc/sE+2rfAYhdrmB1o+XI1eu4gl4KEicnCwm2z5W8g==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
