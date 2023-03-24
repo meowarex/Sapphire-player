@@ -331,7 +331,7 @@
     "mitt": "^3.0.0",
     "music-metadata": "7.13.3",
     "musicbrainz-api": "^0.10.2",
-    "open": "^8.4.2",
+    "open": "^9.0.0",
     "pako": "^2.1.0",
     "pidusage": "^3.0.2",
     "pretty-ms": "^8.0.0",
