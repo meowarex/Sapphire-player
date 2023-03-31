@@ -4035,10 +4035,10 @@ music-metadata@7.13.3:
     strtok3 "^6.3.0"
     token-types "^4.2.1"
 
-musicbrainz-api@^0.10.2:
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/musicbrainz-api/-/musicbrainz-api-0.10.2.tgz#1e6640abc7903354bffc7e8a99e9f09e8645864f"
-  integrity sha512-XabMVs3YKu7FM3agNI71JNaG8aLG1jkiU44xF9FwdnpVEUTgChvkQydiRQu6G7J2IKDZkqmUsh4zDSvofFW+2w==
+musicbrainz-api@^0.10.3:
+  version "0.10.3"
+  resolved "https://registry.yarnpkg.com/musicbrainz-api/-/musicbrainz-api-0.10.3.tgz#97de42c48482069e998773a1558470d57c024c90"
+  integrity sha512-RV/QS8fDi5EgmMiO7L86XH8BhmVtrMP2QKCIFsn/njtU9+r/6niqgLibu8hQqVqDG35gY9t+ERyVs41zC5q6bg==
   dependencies:
     "@types/caseless" "^0.12.1"
     "@types/request-promise-native" "^1.0.17"

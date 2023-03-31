@@ -330,7 +330,7 @@
     "mime-types": "^2.1.35",
     "mitt": "^3.0.0",
     "music-metadata": "7.13.3",
-    "musicbrainz-api": "^0.10.2",
+    "musicbrainz-api": "^0.10.3",
     "open": "^9.1.0",
     "pako": "^2.1.0",
     "pidusage": "^3.0.2",
