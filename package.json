@@ -1,19 +1,20 @@
 {
   "name": "sapphire",
-  "author": "Atomix <info@atomix.one>",
+  "author": "Geoxor <geoxor123@outlook.com>",
   "productName": "Sapphire",
-  "version": "1.8.40",
+  "version": "1.9.0",
   "main": "./release/dist/main/main.js",
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://raw.githubusercontent.com/A-T-O-M-I-X/"
+      "url": "https://raw.githubusercontent.com/Geoxor/amethyst/master/LICENSE"
     }
   ],
   "description": "Sapphire is an Electron-based audio player with a node-based audio routing system, the main goal of this project is to make a music player in Typescript that has pro-level features as most DAWs / DAEs, while also providing useful tools and customizability to the end-user to deal with audio.",
   "scripts": {
     "dev": "concurrently -p none \"yarn start:main\" \"yarn start:renderer\" ",
-    "build": "concurrently -p none \"yarn build:main\" \"yarn build:renderer\" \"yarn gen:all\"",
+    "dev:android": "yarn build:renderer && concurrently -p none \"yarn start:renderer\" \"yarn cap run android\" ",
+    "build": "concurrently -p none \"yarn build:main\" \"yarn build:renderer\" \"yarn gen:all\" && yarn cap sync",
     "build:main": "concurrently -p none \"tsc ./src/main/preload.ts\" \"tsc -p ./src/main/tsconfig.json\" ",
     "build:renderer": "vite build --config ./src/renderer/vite.config.ts",
     "start:main": "yarn build:main && cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only ./src/main/main.ts",
@@ -245,44 +246,50 @@
     "publish": {
       "provider": "github",
       "owner": "Atomix",
-      "repo": "Sapphire-player"
+      "repo": "smethyst"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/A-T-O-M-I-X/Sapphire-player"
+    "url": "git+https://github.com/A-T-O-M-I-X"
   },
   "contributors": [
     {
-      "name": "Holographic-YMGL",
+      "name": "Atomix",
       "email": "info@atomix.one",
       "url": "https://github.com/A-T-O-M-I-X"
     }
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/A-T-O-M-I-X/Sapphire-player/issues"
+    "url": "https://github.com/A-T-O-M-I-X"
   },
   "keywords": [
     "electron",
     "music-player",
     "vue"
   ],
-  "homepage": "https://github.com/A-T-O-M-I-X/Sapphire-player#readme",
+  "workspaces": {
+    "nohoist": [
+      "**/@capacitor/ios"
+    ]
+  },
+  "homepage": "https://github.com/A-T-O-M-I-X",
   "devDependencies": {
-    "@types/discord-rpc": "^4.0.4",
+    "@capacitor/cli": "^4.7.3",
+    "@types/discord-rpc": "^4.0.3",
     "@types/file-saver": "^2.0.5",
     "@types/mime-types": "^2.1.1",
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.15.3",
     "@types/sharp": "^0.31.1",
     "@types/source-map-support": "^0.5.6",
     "@types/three": "^0.149.0",
-    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.56.0",
-    "@vitejs/plugin-vue": "^4.0.0",
+    "@vitejs/plugin-vue": "^4.1.0",
     "@vue/eslint-config-typescript": "^11.0.2",
     "@vue/test-utils": "^2.2.7",
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.0.1",
     "cross-env": "^7.0.3",
     "electron": "23.2.1",
     "electron-builder": "^23.6.0",
@@ -294,55 +301,68 @@
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-vue": "^9.9.0",
-    "happy-dom": "^8.2.3",
-    "postcss": "^8.4.23",
-    "prettier": "^2.8.7",
-    "rimraf": "^4.1.2",
+    "happy-dom": "^9.1.9",
+    "postcss": "^8.4.21",
+    "prettier": "^2.8.6",
+    "rimraf": "^5.0.0",
     "standardized-audio-context-mock": "^9.6.14",
-    "tailwindcss": "^3.2.4",
+    "tailwindcss": "^3.3.1",
     "ts-node": "^10.7.0",
     "tsx": "^3.12.6",
-    "typescript": "^4.9.5",
-    "vitepress": "1.0.0-alpha.65",
-    "vitest": "^0.29.8",
+    "typescript": "^5.0.4",
+    "vitepress": "1.0.0-alpha.64",
+    "vitest": "^0.29.7",
     "vue-tsc": "^1.2.0"
   },
   "dependencies": {
+    "@capacitor/action-sheet": "^4.1.0",
+    "@capacitor/android": "^4.7.1",
+    "@capacitor/core": "^4.7.3",
+    "@capacitor/device": "^4.1.0",
+    "@capacitor/dialog": "^4.1.0",
+    "@capacitor/filesystem": "^4.1.4",
+    "@capacitor/haptics": "^4.1.0",
+    "@capacitor/ios": "^4.7.3",
+    "@capacitor/local-notifications": "^4.1.5",
+    "@capacitor/splash-screen": "^4.2.0",
+    "@capacitor/status-bar": "^4.1.1",
     "@domchristie/needles": "^0.0.2-1",
+    "@floating-ui/core": "^1.2.6",
+    "@floating-ui/dom": "^1.2.6",
     "@supercharge/promise-pool": "^2.4.0",
     "@three-ts/orbit-controls": "^1.4.7",
     "@types/pako": "^2.0.0",
     "@types/pidusage": "^2.0.2",
-    "@types/wavesurfer.js": "^6.0.4",
+    "@types/wavesurfer.js": "^6.0.3",
     "@vue-flow/additional-components": "^1.3.3",
-    "@vue-flow/core": "^1.19.0",
-    "@vueuse/core": "^9.13.0",
+    "@vue-flow/core": "^1.18.1",
+    "@vueuse/core": "^9.12.0",
     "buffer": "^6.0.3",
-    "chalk": "5.2.0",
+    "chalk": "4.1.2",
     "discord-rpc": "^4.0.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.6",
     "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "electron-window-state": "^5.0.3",
-    "ffmpeg-static": "^5.1.0",
     "file-saver": "^2.0.5",
     "mime-types": "^2.1.35",
     "mitt": "^3.0.0",
-    "music-metadata": "7.13.4",
-    "musicbrainz-api": "^0.10.3",
+    "music-metadata": "7.13.1",
+    "musicbrainz-api": "^0.10.2",
     "open": "^9.1.0",
     "pako": "^2.1.0",
     "pidusage": "^3.0.2",
     "pretty-ms": "^8.0.0",
-    "sharp": "^0.32.0",
-    "three": "^0.151.3",
+    "sharp": "^0.31.3",
+    "three": "^0.150.1",
+    "uuid": "^9.0.0",
     "vite": "^4.2.1",
     "vite-plugin-windicss": "^1.8.10",
     "vue": "^3.2.47",
     "vue-router": "4",
     "vue-virtual-scroller": "^2.0.0-beta.8",
-    "wavesurfer.js": "^6.6.3",
+    "wavesurfer.js": "^6.6.1",
     "windicss": "^3.5.6"
   },
   "devEngines": {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useElectron } from "@/amethyst";
+import { amethyst } from "@/amethyst";
 import { CloseIcon } from "@/icons/fluency";
 import { AudioFileIcon, ExternalLinkIcon, ImageIcon, ListIcon, PlaystationButtonsIcon, BinocularsIcon, LoadingIcon } from "@/icons/material";
 import ResetIcon from "@/icons/material/ResetIcon.vue";
@@ -147,7 +147,7 @@ onUnmounted(() => {
         </li>
         <button
           class="cursor-pointer"
-          @click="useElectron().ipc.invoke('show-item', [ currentItem.path])"
+          @click="amethyst.showItem(currentItem.path)"
         >
           Show in explorer
           <ExternalLinkIcon />
@@ -206,7 +206,7 @@ onUnmounted(() => {
         </li>
         <button
           class="cursor-pointer"
-          @click="useElectron().ipc.invoke('show-item', [ currentItem.getCachePath()])"
+          @click="amethyst.showItem(currentItem.getCachePath())"
         >
           Show .amf
           <ExternalLinkIcon />

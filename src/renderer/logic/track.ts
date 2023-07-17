@@ -1,10 +1,9 @@
 import { ref } from "vue";
-import { useElectron } from "../amethyst";
 import { bytesToHuman, secondsToColinHuman, secondsToHuman } from "@shared/formating";
-import { ALLOWED_AUDIO_EXTENSIONS } from "@shared/constants";
 import { IMetadata, LoadState, LoadStatus } from "@shared/types";
 import FileSaver from "file-saver";
 import mime from "mime-types";
+import { amethyst } from "@/amethyst";
 
 /**
  * Each playable audio file is an instance of this class
@@ -15,19 +14,21 @@ export class Track {
   public isLoading = ref(false);
   public isLoaded = ref(false);
   public hasErrored = ref(false);
+  public deleted: boolean = false;
+  public path: string;
 
-  public constructor(public path: string) {
-    if (!ALLOWED_AUDIO_EXTENSIONS.some(ext => path.toLowerCase().endsWith(ext)))
-      throw new Error(`Given file extension does not match any of the allowed types [${ALLOWED_AUDIO_EXTENSIONS.join(", ")}]`);
+  public constructor(public absolutePath: string) {
+    this.path = `file://${absolutePath}`;
   }
 
-  public getCachePath() {
-    return window.path.join(useElectron().APPDATA_PATH || "" , "/amethyst/Metadata Cache", this.getFilename() + ".amf");
+  public getCachePath(absolute?: boolean) {
+    const amfPath = window.path.join(amethyst.APPDATA_PATH || "" , "/amethyst/Metadata Cache", this.getFilename() + ".amf");
+    return absolute ? amfPath : `file://${amfPath}`;
   }
  
   private async isCached() {
     try {
-      await window.fs.stat(this.getCachePath());
+      await window.fs.stat(this.getCachePath(true));
       return true;
     } catch (error) {
       return false;
@@ -36,6 +37,13 @@ export class Track {
 
   private async fetchCache() {
     return (await fetch(this.getCachePath())).json();
+  }
+
+  public async delete() {
+    return window.fs.unlink(this.absolutePath).then(() => {
+      this.deleted = true;
+      window.fs.unlink(this.getCachePath(true)).catch();
+    });
   }
 
   public getCoverByFace(face = 0) {
@@ -54,8 +62,7 @@ export class Track {
         this.metadata.state = LoadStatus.Loaded;
         return this.metadata.data;
       }
-      const amethyst = await import("../amethyst");
-      this.metadata.data = await amethyst.useElectron().getMetadata(this.path);
+      this.metadata.data = await amethyst.getMetadata(this.absolutePath);
       this.metadata.state = LoadStatus.Loaded;
       return this.metadata.data;
     } catch (error) {
@@ -75,8 +82,7 @@ export class Track {
         this.cover.state = LoadStatus.Loaded;
         return this.cover.data;
       }
-      const amethyst = await import("../amethyst");
-      const data = await amethyst.useElectron().getCover(this.path);
+      const data = await amethyst.getCover(this.absolutePath);
       this.cover.data = data ? `data:image/webp;base64,${data}` : undefined;
       this.cover.state = LoadStatus.Loaded;
       return this.cover.data;
@@ -99,7 +105,7 @@ export class Track {
       metadata.common.picture = [];
     }
     
-    window.fs.writeFile(this.getCachePath(), JSON.stringify({
+    window.fs.writeFile(this.getCachePath(true), JSON.stringify({
       cover,
       metadata,
     }, null, 2)).catch(console.log);
@@ -142,13 +148,36 @@ export class Track {
     return this.metadata.data?.common.title;
   }
 
+  public async getArrayBuffer() {
+    const response = await fetch(this.path);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch file: ${response.statusText}`);
+    }
+    const buffer = await response.arrayBuffer();
+    return buffer;
+  }
+
   /**
    * @returns The filename of a file from the full path
    * @example "02. Daft Punk - Get Lucky.flac"
    */
   public getFilename() {
-    return this.path.substring(Math.max(this.path.lastIndexOf("\\"), this.path.lastIndexOf("/")) + 1);
-  };
+    if (amethyst.getCurrentPlatform() === "desktop") {
+      const { base } = window.path.parse(this.absolutePath);
+      return base;
+    }
+
+    return this.absolutePath;
+  }
+
+  /**
+   * @returns The filename of a file from the full path without its extension
+   * @example "02. Daft Punk - Get Lucky"
+   */
+  public getFilenameWithoutExtension() {
+    const { name } = window.path.parse(this.absolutePath);
+    return name;
+  }
 
   /**
    * @returns The filesize in a human readable string

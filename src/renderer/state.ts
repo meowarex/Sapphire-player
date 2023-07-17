@@ -11,17 +11,12 @@ export interface IContextMenuOption {
 
 export class Store {
 	public state = reactive({
-		cpuUsage: {
-			node: 0,
-			renderer: 0
-		},
-		version: "",
 		isMinimized: false,
 		isFocused: true,
+		isCheckingForUpdates: false,
 		isMaximized: false,
 		isShowingBigCover: false,
 		updateReady: false,
-		defaultCover: "",
 		theme: "amethyst-dark",
 	});
 
@@ -34,13 +29,12 @@ export class Store {
 		processingConcurrency: 3,
 		showDbMeter: true,
 		showAmbientBackground: true,
-		ambientBackgroundOpacity: 32,
+		ambientBackgroundOpacity: 100,
 		ambientBackgroundSpin: true,
-		ambientBackgroundBlurStrength: 40,
-		ambientBackgroundSpinSpeed: 24,
+		ambientBackgroundBlurStrength: 32,
+		ambientBackgroundSpinSpeed: 64,
 		ambientBackgroundZoom: 125,
-		ambientBackgroundBlendMode: "difference",
-		spectrumVerticalZoom: 1.4,
+		ambientBackgroundBlendMode: "soft-light",
 		spectrumFftSize: 8192,
 		spectrumSmoothing: 0.7,
 		vectorscopeLineThickness: 1,
@@ -48,18 +42,22 @@ export class Store {
 		followQueue: false,
 		showInspector: true,
 		isSnappingToGrid: false,
-		diagonalVectorscope: true,
+		lissajousVectorscope: false,
 		showLoudnessMeter: true,
 		useLogarithmicSpectrum: true,
 		useVsync: true,
 		showBigVectorscope: false,
 		useDiscordRichPresence: true,
+		showDebugStats: true,
 		smoothScrollSpeed: 0.075,
 		playOnStartup: false,
+		decibelMeterMinimumDb: -60,
+		decibelMeterSeperatePrePost: true,
+		decibelMeterFftSize: 1024,
+		vectorscopeFftSize: 512,
 	};
 
-	public settings = useLocalStorage("settings", this.defaultSettings, { writeDefaults: true }).value;
-	public isDev = computed(() => this.state.version.includes("dev"));
+	public settings = useLocalStorage("settings", this.defaultSettings, { writeDefaults: true, mergeDefaults: true });
 
 	// TODO: Refactor context menus to its own class & manager
 

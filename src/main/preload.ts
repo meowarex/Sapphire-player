@@ -21,6 +21,7 @@ export type Channels =
 	"open-file-dialog" |
 	"log-print" |
 	"clear-rich-presence" |
+	"encode-to-dfpwm" |
 	"open-external" |
 	"log-error" |
 	"open-folder-dialog" |
@@ -36,6 +37,9 @@ export type Channels =
 	"check-for-updates";
 
 contextBridge.exposeInMainWorld("electron", {
+	isMac: os.platform() === "darwin", 
+	isWindows: os.platform() === "win32", 
+	isLinux: os.platform() === "linux",
 	ipcRenderer: {
 		invoke(channel: Channels, args?: string[]) {
 			return ipcRenderer.invoke(channel, args);

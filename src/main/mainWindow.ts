@@ -2,7 +2,7 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { app, BrowserWindow, dialog, Event, ipcMain, Notification, shell } from "electron";
+import { app, BrowserWindow, dialog, Event, ipcMain, shell } from "electron";
 import { Discord, FormatIcons } from "../plugins/amethyst.discord";
 import {ALLOWED_AUDIO_EXTENSIONS} from "../shared/constants";
 import { IS_DEV, store } from "./main";
@@ -20,45 +20,17 @@ try {
 }
 
 export const icon = () => path.join(RESOURCES_PATH, "icon.png");
-export const checkForUpdatesAndInstall = () => {
-	!IS_DEV && import("electron-updater").then(({ autoUpdater }) => autoUpdater.checkForUpdatesAndNotify());
-};
 
 const LOGO = `
-___               _                  
-(  _ \            ( )    _            
-| (_(_)  _ _ _ _  | |__ (_)_ __   __  
- \__ \ / _  )  _ \|  _  \ |  __)/ __ \
-( )_) | (_| | (_) ) | | | | |  (  ___/
- \____)\__ _)  __/(_) (_)_)_)   \____)
-            | |                       
-            (_)   
- v${APP_VERSION}                                  
+    ___                   __  __               __ 
+   /   |  ____ ___  ___  / /_/ /_  __  _______/ /_
+  / /| | / __ \`__ \\/ _ \\/ __/ __ \\/ / / / ___/ __/
+ / ___ |/ / / / / /  __/ /_/ / / / /_/ (__  ) /_  
+/_/  |_/_/ /_/ /_/\\___/\\__/_/ /_/\\__, /____/\\__/  
+ v${APP_VERSION}                        /____/            
 		`;
 
 import("chalk").then(({default: chalk}) => console.log(chalk.hex("868aff")(LOGO)));
-
-const notifications: Record<string, Function> = {
-	showUpdateInstallingNotification: () => {
-		const title = "Update Installing";
-		const body = "The application will restart once the update is complete.";
-		new Notification({
-			icon: icon(),
-			title,
-			body, 
-		}).show();
-	},
-
-	showUpdateAvailableNotification: () => {
-		const title = "Sapphire Update Available";
-		const body = "Sapphire is downloading an update and will restart when complete";
-		new Notification({
-			icon: icon(),
-			title,
-			body
-		}).show();
-	},
-};
 
 export class MainWindow {
 	public readonly window: BrowserWindow;
@@ -136,6 +108,7 @@ export class MainWindow {
 		this.window.loadURL(this.resolveHTMLPath("index"));
 
 		this.window.on("ready-to-show", () => {
+			this.window.webContents.setZoomFactor(1.25);
 
 			if (process.env.START_MINIMIZED)
 				this.window.minimize();
@@ -163,7 +136,7 @@ export class MainWindow {
 
 		this.window.webContents.on("dom-ready", async () => {
 			if (process.argv[1])
-				this.playAudio(process.argv[1]);
+				this.playAudio(path.join(process.argv[1]));
 
 			// this.window.webContents.send("default-cover", await fs.promises.readFile(
 			// 	path.join(RESOURCES_PATH, "/images/audio.png"),
@@ -182,7 +155,7 @@ export class MainWindow {
 		});
 	}
 
-	private async loadFolder(inputPath: string) {
+	private async loadFolder(inputPath: string, filter: string[]) {
 		return new Promise((resolve, reject) => {
 			fs.readdir(inputPath, (error, files) => {
 				if (error) {
@@ -194,8 +167,8 @@ export class MainWindow {
 							const filePath = path.join(inputPath, file);
 							const stats = await fs.promises.stat(filePath);
 							if (stats.isDirectory())
-								return this.loadFolder(filePath);
-							else if (stats.isFile() && ALLOWED_AUDIO_EXTENSIONS.includes(path.extname(filePath).slice(1).toLowerCase()))
+								return this.loadFolder(filePath, filter);
+							else if (stats.isFile() && filter.includes(path.extname(filePath).slice(1).toLowerCase()))
 								return filePath;
 						}),
 					).then(files => resolve(files.filter(file => !!file)));
@@ -207,7 +180,6 @@ export class MainWindow {
 	private setIpcEvents(): void {
 
 		Object.entries({
-			"test-notification": (_: Event, [notification]: string) => (notifications)[notification](),
 			"minimize": () => this.window.minimize(),
 			"maximize": () => this.window.maximize(),
 			"unmaximize": () => this.window.unmaximize(),
@@ -216,38 +188,25 @@ export class MainWindow {
 				return fs.promises.readFile(path);
 			},
 			"get-appdata-path": () => app.getPath("appData"),
-			"open-file-dialog": async () => {
-				const response = await dialog.showOpenDialog({
+			"open-file-dialog": async (_: Event, [filters]: [Electron.FileFilter[]]) => {
+				return dialog.showOpenDialog({
 					properties: ["openFile"],
-					filters: [
-						{ name: "Audio", extensions: ALLOWED_AUDIO_EXTENSIONS },
-						{ name: "Sapphire Node Graph", extensions: ["ang"]}
-					],
+					filters,
+				});
+			},
+
+			"open-folder-dialog": async (_: Event, [filter]: [string[]]) => {
+				const result = await dialog.showOpenDialog({
+					properties: ["openDirectory"],
 				});
 
-				const file = response.filePaths[0];
+				if (result.canceled) return result;
 
-				// TODO: fix these returns types being incosistent 
-				if (file.endsWith(".ang")) {
-					return {canceled: response.canceled, filePath: file};
-				}
-
-				if (!response.canceled)
-					return this.playAudio(file);
+				return {canceled: false, filePaths: await this.loadFolder(result.filePaths[0], filter) };
 			},
 
 			"open-external": async (_: Event, [path]: string[]) => {
 				(await import("open")).default(path);
-			},
-
-			"open-folder-dialog": async () => {
-				const response = await dialog.showOpenDialog({
-					properties: ["openDirectory"],
-				});
-
-				if (!response.canceled) {
-					this.window.webContents.send("play-folder", await this.loadFolder(response.filePaths[0]));
-				}
 			},
 
 			"show-save-dialog": () => dialog.showSaveDialog({filters: [
@@ -286,7 +245,7 @@ export class MainWindow {
 				paths.forEach(async path => {
 					const stat = await fs.promises.stat(path);
 					if (stat.isDirectory()) {
-						this.window.webContents.send("load-folder", await this.loadFolder(path));
+						this.window.webContents.send("load-folder", await this.loadFolder(path, ALLOWED_AUDIO_EXTENSIONS));
 					}
 					else
 						this.playAudio(path);
@@ -315,11 +274,8 @@ export class MainWindow {
 
 			"clear-rich-presence": () => {
 				this.discord.clearRichPresence();
-			},
-
-			"check-for-updates": () => {
-				checkForUpdatesAndInstall();
 			}
+
 		}).forEach(([channel, handler]) => ipcMain.handle(channel, handler));
 	}
 }

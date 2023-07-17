@@ -1,35 +1,48 @@
 <script lang="ts" setup>
-import { useElectron, useState } from "@/amethyst";
+import { amethyst, useState } from "@/amethyst";
 import ControlButtons from "@/components/input/ControlButtons.vue";
 import UpdateButton from "@/components/input/UpdateButton.vue";
 import Menu from "@/components/menu/MenuContainer.vue";
 import MenuOption from "@/components/menu/MenuOption.vue";
 import MenuSplitter from "@/components/menu/MenuSplitter.vue";
 import ProcessorUsageMeter from "@/components/ProcessorUsageMeter.vue";
-import { AudioFileIcon, DiscordIcon, GitHubIcon, MusicFolderIcon, ResetIcon, ZoomInIcon, ZoomOutIcon, RemoveIcon, ResizeIcon, DownloadingUpdatesIcon, SettingsIcon, BookshelfIcon } from "@/icons/material";
+import { AudioFileIcon, DiscordIcon, GitHubIcon, MusicFolderIcon, ResetIcon, ZoomInIcon, ZoomOutIcon, RemoveIcon, ResizeIcon, DownloadingUpdatesIcon, SettingsIcon, BookshelfIcon, LoadingIcon } from "@/icons/material";
 import { useFps } from "@vueuse/core";
 import { player } from "@/logic/player";
 import AmethystLogo from "@/icons/AmethystLogo.vue";
 import { onMounted, ref } from "vue";
+import { countDomElements, refreshWindow } from "@/logic/dom";
+import BaseChip from "./BaseChip.vue";
+
 const min = ref(Number.POSITIVE_INFINITY);
 const max = ref(Number.NEGATIVE_INFINITY);
 const fpsCounter = useFps({every: 60});
 const fps = ref(0);
 const domSize = ref(0);
+const latency = ref(0);
+const cpuUsage = ref({
+  node: 0,
+  renderer: 0
+});
+
+type ProcessorUsage = {node: number, renderer: number};
 
 onMounted(() => {
   setInterval(() => {
     fps.value = fpsCounter.value;
     if (fps.value > max.value) max.value = fps.value;
     if (fps.value < min.value) min.value = fps.value;
-    domSize.value = document.getElementsByTagName("*").length;
-
+    domSize.value = countDomElements();
+    player.getLatency().then(l => latency.value = l);
+    // TODO: multiplatform support
+    window.electron.ipcRenderer.invoke<ProcessorUsage>("percent-cpu-usage").then(usage => cpuUsage.value = usage);
   }, 1000);
 });
 
+// TODO: move this to queue or something
+
 const state = useState();
-const electron = useElectron();
-const refreshWindow = () => location.reload();
+// const electron = useElectron();
 </script>
 
 <template>
@@ -37,8 +50,14 @@ const refreshWindow = () => location.reload();
     class="borderBottom z-100 font-main drag text-12px select-none flex justify-between items-center"
     :class="[state.state.isFocused ? 'text-primary-1000' : 'text-primary-900']"
   >
-    <div class="flex no-drag h-full items-center">
-      <div class="logo w-40px items-center flex justify-center cursor-heart-pointer">
+    <div
+      class="flex no-drag h-full items-center"
+    
+      :class="[amethyst.getCurrentOperatingSystem() == 'mac' && 'pl-16']"
+    >
+      <div
+        class="logo w-40px items-center flex justify-center cursor-heart-pointer"
+      >
         <amethyst-logo
           class="w-4 h-4 min-h-4 min-w-4"
         />
@@ -48,13 +67,13 @@ const refreshWindow = () => location.reload();
           :shortcuts="['CTRL', 'O']"
           title="Open audio..."
           :icon="AudioFileIcon"
-          @click="() => electron.openFileDialog()"
+          @click="amethyst.openAudioFilesAndAddToQueue"
         />
         <menu-option
           :shortcuts="['CTRL', 'SHIFT', 'O']"
-          title="Open folder..."
+          title="Open audio folder..."
           :icon="MusicFolderIcon"
-          @click="() => electron.openFolderDialog()"
+          @click="amethyst.openAudioFoldersAndAddToQueue"
         />
       </Menu>
       <Menu title="Utility">
@@ -83,7 +102,7 @@ const refreshWindow = () => location.reload();
         />
         <menu-option
           :shortcuts="['CTRL', 'SHIFT', 'Z']"
-          title="Clear errored"
+          title="Clear errored / deleted"
           :icon="RemoveIcon"
           @click="player.queue.clearErrored()"
         />
@@ -100,6 +119,10 @@ const refreshWindow = () => location.reload();
           :icon="ResetIcon"
           @click="refreshWindow"
         />
+
+        <menu-splitter 
+          v-if="amethyst.getCurrentPlatform() === 'desktop'"
+        />
       </Menu>
       <Menu title="View">
         <menu-option
@@ -107,33 +130,9 @@ const refreshWindow = () => location.reload();
           :icon="SettingsIcon"
           @click="$router.push({ name: 'settings.appearance' })"
         />
-        <menu-option
-          title="Show dev tools"
-          :icon="SettingsIcon"
-          :shortcuts="['CTRL', 'SHIFT', 'I']"
-          @click="electron.showDevTools()"
-        />
-      </Menu>
-
-      <Menu title="About">
-        <menu-option
-          title="Documentation"
-          :icon="BookshelfIcon"
-          @click="electron.open('https://atomix.one/')"
-        />
-        <menu-option
-          title="GitHub Repository"
-          :icon="GitHubIcon"
-          @click="electron.open('https://github.com/A-T-O-M-I-X/Sapphire-player')"
-        />
-        <menu-option
-          title="Discord Server"
-          :icon="DiscordIcon"
-          @click="electron.open('https://discord.gg/azFB7j54NN')"
-        />
       </Menu>
       <Menu
-        v-if="state.isDev.value"
+        v-if="amethyst.IS_DEV"
         title="Debug"
       >
         <menu-option
@@ -144,26 +143,32 @@ const refreshWindow = () => location.reload();
           title="Set 'updateReady' to 'false'"
           @click="state.state.updateReady = false;"
         />
-        <menu-splitter />
-        <menu-option
-          title="Test 'UpdateInstallingNotification'"
-          @click="electron.testNotification('showUpdateInstallingNotification')"
-        />
-        <menu-option
-          title="Test 'UpdateAvailableNotification'"
-          @click="electron.testNotification('showUpdateAvailableNotification')"
-        />
       </Menu>
     </div>
 
-    <p class="absolute left-1/2 transform-gpu -translate-x-1/2">
-      Sapphire v{{ state.state.version }}
+    <p class="absolute flex items-center gap-1 left-1/2 transform-gpu -translate-x-1/2">
+      <LoadingIcon
+        v-if="state.state.isCheckingForUpdates"
+        class="h-3 animate-spin w-3 min-h-3 min-w-3"
+      />
+      Sapphire 
+      <strong class="opacity-50 font-normal capitalize">{{ amethyst.getCurrentPlatform() }}</strong>
+      <BaseChip v-if="amethyst.IS_DEV">
+        dev
+      </BaseChip>
+      <strong class="opacity-50 font-normal">v{{ amethyst.VERSION }}</strong>
     </p>
 
-    <div class="flex gap-1.25 items-center overflow-hidden font-aseprite">
-      <div class="w-56 flex gap-1 justify-end">
-        <div class="hidden lg:inline no-drag font-aseprite text-primary-900 text-opacity-50">
-          <strong class="text-primary-900 text-opacity-25">DOM </strong> {{ domSize }}
+    <div class="flex gap-1.25 h-6 items-center overflow-hidden font-aseprite whitespace-nowrap">
+      <div
+        v-if="state.settings.value.showDebugStats"
+        class="w-56 flex gap-1 justify-end no-drag" 
+        @click="min = Number.POSITIVE_INFINITY; max = Number.NEGATIVE_INFINITY;"
+      >
+        <div class="hidden lg:inline font-aseprite text-primary-900 text-opacity-50">
+          {{ domSize }}<strong class="text-primary-900 text-opacity-25">DOM </strong>
+          {{ player.getBufferSize() }}<strong class="text-primary-900 text-opacity-25">smp</strong>
+          {{ latency.toFixed(2) }}<strong class="text-primary-900 text-opacity-25">ms</strong>
         </div>
         <div 
           :class="[
@@ -176,28 +181,31 @@ const refreshWindow = () => location.reload();
           {{ fps }}fps
         </div>
         <div
-          class="hidden lg:inline no-drag font-aseprite text-primary-900 text-opacity-50"
-          @click="min = Number.POSITIVE_INFINITY; max = Number.NEGATIVE_INFINITY;"
+          class="hidden lg:inline font-aseprite text-primary-900 text-opacity-50"
         >
-          <strong class="text-primary-900 text-opacity-25">min</strong> {{ min }} <strong class="text-primary-900 text-opacity-25">max</strong> {{ max }}
+          {{ min }}<strong class="text-primary-900 text-opacity-25">min</strong> {{ max }}<strong class="text-primary-900 text-opacity-25">max</strong>
         </div>
       </div>
+    
       <update-button
         v-if="state.state.updateReady"
-        @click="electron.close()"
+        @click="amethyst.performWindowAction('close')"
       />
-      <processor-usage-meter
-        :value="state.state.cpuUsage.renderer"
-      />
-      <processor-usage-meter
-        :value="state.state.cpuUsage.node"
-      />
+        
+      <template v-if="state.settings.value.showDebugStats">
+        <processor-usage-meter
+          v-for="value of Object.values(cpuUsage)"
+          :key="value"
+          :value="value"
+        />
+      </template>
       <control-buttons
+        v-if="amethyst.getCurrentPlatform() === 'desktop' && amethyst.getCurrentOperatingSystem() != 'mac'"
         :is-maximized="state.state.isMaximized"
-        @close="electron.close"
-        @minimize="electron.minimize"
-        @maximize="electron.maximize"
-        @unmaximize="electron.unmaximize"
+        @close="amethyst.performWindowAction('close')"
+        @minimize="amethyst.performWindowAction('minimize')"
+        @maximize="amethyst.performWindowAction('maximize')"
+        @unmaximize="amethyst.performWindowAction('unmaximize')"
       />
     </div>
   </div>

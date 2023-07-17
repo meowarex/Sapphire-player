@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useState, useFs } from "@/amethyst";
-import SquareButton from "@/components/input/SquareButton.vue";
-import { MagnetIcon, SaveIcon, AdjustIcon, AzimuthIcon, FilterIcon, SelectNoneIcon, WaveIcon, RemoveIcon, LoadingIcon, ResetIcon } from "@/icons/material";
+import { amethyst, useState } from "@/amethyst";
+import BaseToolbarButton from "@/components/BaseToolbarButton.vue";
+import { MagnetIcon, SaveIcon, AdjustIcon, AzimuthIcon, FilterIcon, SelectNoneIcon, AddIcon, WaveIcon, RemoveIcon, LoadingIcon } from "@/icons/material";
 import { getThemeColorHex } from "@/logic/color";
 import { Background, BackgroundVariant } from "@vue-flow/additional-components";
 import { Connection, EdgeMouseEvent, NodeDragEvent, VueFlow } from "@vue-flow/core";
 import { onKeyStroke } from "@vueuse/core";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { player } from "@/logic/player";
-import { AmethystPannerNode, AmethystGainNode, AmethystSpectrumNode, AmethystFilterNode } from "@/nodes";
+import { AmethystPannerNode, AmethystGainNode, AmethystSpectrumNode, AmethystFilterNode, AmethystEightBandEqualizerNode } from "@/nodes";
 import { AmethystAudioNode } from "@/logic/audio";
 import { Coords } from "@shared/types";
 import { useContextMenu } from "@/components/ContextMenu";
-
+import BaseToolbar from "@/components/BaseToolbar.vue";
+import BaseToolbarSplitter from "@/components/BaseToolbarSplitter.vue";
 const dash = ref();
 const nodeEditor = ref();
-const fs = useFs();
-type NodeMenuOptions = Coords & {source?: AmethystAudioNode<AudioNode>, target?: AmethystAudioNode<AudioNode>};
+type NodeMenuOptions = Coords & {source?: AmethystAudioNode, target?: AmethystAudioNode};
 
 let resizeObserver: ResizeObserver;
 
@@ -29,12 +29,11 @@ onUnmounted(() => {
   resizeObserver.disconnect();
 });
 
+// Proxy function because dash.value is innaccessible in template code
+const fitToView = () => dash.value.fitView();
+
 const state = useState();
 const elements = computed(() => [...player.nodeManager.getNodeProperties(), ...player.nodeManager.getNodeConnections()]);
-
-const handleClick = () => {
-  state.settings.isSnappingToGrid = !state.settings.isSnappingToGrid;
-};
 
 const getDashCoords = () => {
   const transformationPane = document.getElementsByClassName("vue-flow__transformationpane")[0]! as HTMLDivElement;
@@ -88,16 +87,23 @@ const computeNodePosition = ({x, y}: Coords) => {
 };
 
 const nodeMenu = ({x, y, source, target}: NodeMenuOptions) => [
-  {title: "Add FilterNode", icon: FilterIcon, action: () => {
+  {title: "Add Filter Node", icon: FilterIcon, action: () => {
     player.nodeManager.addNode(new AmethystFilterNode(player.nodeManager.context, computeNodePosition({x, y})), source && target && [source, target]);
   }},
-  {title: "Add PannerNode", icon: AzimuthIcon, action: () => {
+  {
+    title: "Add Equalizer Node", 
+    icon: FilterIcon, 
+    action: () => {
+      player.nodeManager.addNode(new AmethystEightBandEqualizerNode(player.nodeManager.context, computeNodePosition({x, y})), source && target && [source, target]);
+    }
+  },
+  {title: "Add Panner Node", icon: AzimuthIcon, action: () => {
     player.nodeManager.addNode(new AmethystPannerNode(player.nodeManager.context, computeNodePosition({x, y})), source && target && [source, target]);
   }},
-  {title: "Add GainNode", icon: AdjustIcon, action: () => {
+  {title: "Add Gain Node", icon: AdjustIcon, action: () => {
     player.nodeManager.addNode(new AmethystGainNode(player.nodeManager.context, computeNodePosition({x, y})), source && target && [source, target]);
   }},
-  {title: "Add AmethystSpectrumNode", icon: WaveIcon, action: () => {
+  {title: "Add Spectrum Node", icon: WaveIcon, action: () => {
     player.nodeManager.addNode(new AmethystSpectrumNode(player.nodeManager.context, computeNodePosition({x, y})), source && target && [source, target]);
   }},
 ];
@@ -110,7 +116,7 @@ const handleEdgeContextMenu = (e: EdgeMouseEvent) => {
   const source = player.nodeManager.nodes.value.find(node => node.properties.id === e.edge.source)!;
   const target = player.nodeManager.nodes.value.find(node => node.properties.id === e.edge.target)!;
 
-  const {x, y} = e.event;
+  const {x, y} = (e.event as MouseEvent);
   useContextMenu().open({x, y}, [
     {title: "Remove connection", icon: RemoveIcon, red: true, action: () => source.disconnectFrom(target)},
     ...nodeMenu({x, y, source, target}),
@@ -131,16 +137,33 @@ const handleConnect = (e: Connection) => {
 };
 
 const handleOpenFile = async () => {
-  const buffer = await fs.open();
-  buffer && player.nodeManager.loadGraph(JSON.parse(buffer.toString("utf8")));
+  const result = await amethyst.openFileDialog([{name: "Sapphire Node Graph", extensions: ["sng"]}]);
+  if (result.canceled) return;
   
+  fetch(result.filePaths[0])
+  .then(response => response.blob())
+  .then(blob => {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => reader.result ? resolve(reader.result as ArrayBuffer) : reject("reader null");
+      reader.readAsArrayBuffer(blob);
+    });
+  })
+  .then(buffer => {
+    // Use the loaded buffer
+    player.nodeManager.loadGraph(JSON.parse(buffer.toString()));
+  });
+
   // Fixes volume resetting to 100% when loading a new graph
   player.setVolume(player.volume.value);
 
-  fitToView();
+  fitToView;
 };
 
-const fitToView = () => dash.value.fitView();
+const handleSaveFile = () => {
+  
+};
+
 onKeyStroke("Delete", () => {
   dash.value.getSelectedNodes.forEach((nodeElement: any) => {
     const node = player.nodeManager.nodes.value
@@ -155,40 +178,56 @@ onKeyStroke("Delete", () => {
 <template>
   <div
     ref="nodeEditor"
-    class="flex-1 h-full w-full borderRight flex flex-col relative"
+    class="flex-1 h-full w-full borderRight flex flex-col"
   >
-    <div
-      class="flex flex-col gap-2 absolute bottom-2 left-2 z-10 "
-    >
-      <SquareButton
-        :icon="ResetIcon"
-        @click="player.nodeManager.reset()"
+    <BaseToolbar>
+      <BaseToolbarButton
+        :icon="AddIcon"
+        tooltip-text="Add Node"
+        @click="useContextMenu().open({x: $event.clientX, y: $event.clientY}, nodeMenu({x: $event.clientX, y: $event.clientY}));"
       />
-      <SquareButton
-        :icon="LoadingIcon"
-        @click="handleOpenFile"
-      />
-      <SquareButton
-        :icon="SaveIcon"
-        @click="fs.save(player.nodeManager.serialize())"
-      />
-      <SquareButton
+
+      <BaseToolbarSplitter />
+
+      <BaseToolbarButton
         :icon="SelectNoneIcon"
+        tooltip-text="Fit to View"
         @click="fitToView"
       />
-      <SquareButton
+      <BaseToolbarButton
         :icon="MagnetIcon"
-        :active="state.settings.isSnappingToGrid"
-        @click="handleClick"
+        :active="state.settings.value.isSnappingToGrid"
+        tooltip-text="Snap to Grid"
+        @click="state.settings.value.isSnappingToGrid = !state.settings.value.isSnappingToGrid"
       />
-    </div>
+
+      <BaseToolbarSplitter />
+
+      <BaseToolbarButton
+        :icon="LoadingIcon"
+        tooltip-text="Open File"
+        @click="handleOpenFile"
+      />
+
+      <BaseToolbarButton
+        :icon="SaveIcon"
+        tooltip-text="Save as"
+        @click="handleSaveFile"
+      />
+      
+      <BaseToolbarButton
+        :icon="RemoveIcon"
+        tooltip-text="Reset All"
+        @click="player.nodeManager.reset()"
+      />
+    </BaseToolbar>
 
     <VueFlow
       ref="dash"
       v-model="elements"
       class="bg-surface-1000 p-2"
-      :snap-to-grid="state.settings.isSnappingToGrid"
-      :max-zoom="2.00"
+      :snap-to-grid="state.settings.value.isSnappingToGrid"
+      :max-zoom="1.00"
       :connection-line-style="{ stroke: getThemeColorHex('--primary-700') }"
       :fit-view-on-init="true"
       :select-nodes-on-drag="false"

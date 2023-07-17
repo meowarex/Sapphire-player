@@ -1,28 +1,37 @@
 <script setup lang="ts">
-import { useShortcuts, useState } from "@/amethyst";
+import { amethyst, useShortcuts } from "@/amethyst";
 import { Track } from "@/logic/track";
 import BaseChip from "@/components/BaseChip.vue";
-import { PlayIcon, ExternalLinkIcon, LoadingIcon, BinocularsIcon, ErrorIcon } from "@/icons/material";
+import { PlayIcon, ExternalLinkIcon, LoadingIcon, ProcessIcon, BinocularsIcon, ErrorIcon } from "@/icons/material";
 import Cover from "@/components/CoverArt.vue";
 import { player } from "@/logic/player";
 import { useContextMenu } from "@/components/ContextMenu";
 import { RemoveIcon, ResetIcon } from "@/icons/material";
 import { useInspector } from "./Inspector";
+import { saveArrayBufferToFile } from "@/logic/dom";
+import { convertDfpwm } from "@/logic/encoding";
 
 defineProps<{tracks: Track[]}>();
-const state = useState();
 const isHoldingControl = useShortcuts().isControlPressed;
-const invoke = window.electron.ipcRenderer.invoke;
 
 // Context Menu options for this component 
 const handleContextMenu = ({x, y}: MouseEvent, track: Track) => {
   useContextMenu().open({x, y}, [
     { title: "Play", icon: PlayIcon, action: () => player.play(track) },
     { title: "Inspect", icon: BinocularsIcon, action: () => useInspector().inspectAndShow(track) },
-    { title: "Show in Explorer...", icon: ExternalLinkIcon, action: () => invoke("show-item", [track.path]) },
+    { title: "Encode to .dfpwm...", icon: ProcessIcon, action: async () => {
+      saveArrayBufferToFile(
+        await convertDfpwm(await track.getArrayBuffer()), 
+        {
+          filename: track.getFilenameWithoutExtension(), 
+          extension: "dfpwm"
+      });
+    }},
+    { title: "Show in Explorer...", icon: ExternalLinkIcon, action: () => amethyst.showItem(track.path) },
     { title: "Export cover...", icon: ExternalLinkIcon, action: () => track.exportCover() },
     { title: "Reload metadata", icon: ResetIcon, action: () => track.fetchAsyncData(true) },
     { title: "Remove from queue", icon: RemoveIcon, red: true, action: () => player.queue.remove(track) },
+    { title: "Delete from disk", icon: RemoveIcon, red: true, action: () => track.delete() },
   ]);
 };
 
@@ -68,13 +77,15 @@ const handleContextMenu = ({x, y}: MouseEvent, track: Track) => {
           :class="[
             isHoldingControl && 'control cursor-external-pointer', 
             item.hasErrored && 'opacity-50 not-allowed',
+            item.deleted && 'opacity-50 !text-rose-400 not-allowed',
+
             player.getCurrentTrack()?.path == item.path && 'currentlyPlaying',
             useInspector().state.isVisible && useInspector().state.currentItem == item && 'currentlyInspecting'
           ]"
           class="row"
           @contextmenu="handleContextMenu($event, item)"
           @keypress.prevent
-          @click="isHoldingControl ? invoke('show-item', [item.path]) : player.play(item)"
+          @click="isHoldingControl ? amethyst.showItem(item.path) : player.play(item)"
         >
           <div
             class="td max-w-4"
@@ -87,11 +98,16 @@ const handleContextMenu = ({x, y}: MouseEvent, track: Track) => {
               v-else-if="item.hasErrored"
               class="h-3 w-3 min-h-3 min-w-3"
             />
+
+            <RemoveIcon
+              v-else-if="item.deleted"
+              class="h-3 w-3 min-h-3 min-w-3"
+            />
     
             <cover
               v-else
               class="w-3 h-3"
-              :url="(item.isLoaded ? item.getCover() : state.state.defaultCover) as string"
+              :url="(item.isLoaded && item.getCover()) as string"
             />
           </div>
           <div

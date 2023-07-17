@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useState } from "@/amethyst";
+import { useState, amethyst } from "@/amethyst";
 import Cover from "@/components/CoverArt.vue";
 import Slider from "@/components/input/BaseSlider.vue";
 import {NextIcon, PauseIcon, PlayIcon, RepeatIcon, RepeatOneIcon, ShuffleIcon } from "@/icons/plumpy";
@@ -31,6 +31,11 @@ const createWaveSurfer = () => {
 
 onMounted(() => {
   wavesurfer = createWaveSurfer();
+
+  // Fix waveform not resizing when disabling/enabling meters
+  const resizeObserver = new ResizeObserver(() => wavesurfer.setHeight(wavesurfer.getHeight()));
+  resizeObserver.observe(document.getElementById("waveform")!);
+
   let oldTrack: Track;
   let hasSeekFiredOnce = true;
   player.on("play", track => {
@@ -74,12 +79,10 @@ onMounted(() => {
   player.on("timeupdate", newTime => {
     // prevent an endless loop of seekTo's
     hasSeekFiredOnce = false;
-
     wavesurfer.seekTo(newTime / player.getCurrentTrack()!.getDurationSeconds()); 
   });
 });
 
-const invoke = window.electron.ipcRenderer.invoke;
 const handleVolumeMouseScroll = (e: WheelEvent) => {
   const delta = Math.sign(e.deltaY);
   delta > 0 ? player.volumeDown() : player.volumeUp();
@@ -105,12 +108,12 @@ const handleContextCoverMenu = ({x, y}: MouseEvent) => {
 <template>
   <div class="flex gap-2 justify-between items-center h-full w-full">
     <cover
-      v-if="state.settings.showCoverArt" 
-      class="rounded-4px h-19 w-19 border-1 border-transparent cursor-pointer hover:border-primary-800"
+      v-if="state.settings.value.showCoverArt" 
+      class="rounded-4px h-19 w-19 min-h-19 min-w-19 text-primary-900 border-1 border-transparent cursor-pointer hover:border-primary-800"
       :class="[
         state.state.isShowingBigCover && 'border-primary-700'
       ]"
-      :url="player.getCurrentTrack()?.getCover() || state.state.defaultCover"
+      :url="player.getCurrentTrack()?.getCover()"
       @contextmenu="handleContextCoverMenu"
       @click="state.state.isShowingBigCover = !state.state.isShowingBigCover"
     />
@@ -119,7 +122,7 @@ const handleContextCoverMenu = ({x, y}: MouseEvent) => {
         <div class="flex flex-col w-full py-1 font-bold gap-1 ">
           <h1
             class="text-12px hover:underline cursor-pointer w-24 overflow-hidden overflow-ellipsis"
-            @click="invoke('show-item', [player.getCurrentTrack()?.path])"
+            @click=" amethyst.showItem(player.getCurrentTrack()?.path!)"
           >
             {{ player.getCurrentTrack()?.getTitleFormatted() }}
           </h1>
