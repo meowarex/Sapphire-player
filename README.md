@@ -15,7 +15,7 @@ Sapphire is an [Electron-Based](https://electronjs.org/) audio player with a [no
 Please do not write reviews yet as I have not finished implementing everything required for me to call this app "complete", things may suddenly change and the current state of the repository might not represent the complete version faithfully.
 
 *Img Src* | *Sapphire v1.8.40*
-![Sapphire](https://cdn.discordapp.com/attachments/864388121219170324/1071752889640427650/Sapphire.png)
+![Sapphire](https://cdn.discordapp.com/attachments/864388121219170324/1178199423227007097/Sapphire-190--2--magicstudio-l70x6l-magic-eufo.png)
 ## [📥 Download](https://github.com/A-T-O-M-I-X/Sapphire-player/releases)
 ## [📃 Documentation](https://atomix.one)
 
