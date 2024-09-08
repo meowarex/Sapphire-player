@@ -49,16 +49,30 @@ jobs:
         run: yarn install
       - name: Build Sapphire
         run: yarn package
-      - name: Ensure No Process and Compress Artifacts
+      - name: Ensure Directory is Clean and Compress Artifacts
         run: |
+          $zipPath = "release\build\zip\windows-build.zip"
+          if (Test-Path $zipPath) {
+            Remove-Item $zipPath -Force
+          }
           mkdir release\build\zip
-          Start-Sleep -Seconds 15  # Add delay to ensure no race condition
-          $process = Get-Process -Name "your-process-name" -ErrorAction SilentlyContinue
-          if ($process) {
-            Write-Output "Process is still running. Exiting."
+          $retryCount = 0
+          $maxRetries = 5
+          $delay = 5
+          while ($retryCount -lt $maxRetries) {
+            try {
+              Compress-Archive -Path release\build\* -DestinationPath $zipPath -Force
+              break
+            } catch {
+              Write-Output "Failed to compress files. Retrying in $delay seconds..."
+              Start-Sleep -Seconds $delay
+              $retryCount++
+            }
+          }
+          if ($retryCount -eq $maxRetries) {
+            Write-Error "Failed to compress files after $maxRetries attempts."
             exit 1
           }
-          Compress-Archive -Path release\build\* -DestinationPath release\build\zip\windows-build.zip -Force
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
