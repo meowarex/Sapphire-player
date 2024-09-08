@@ -52,7 +52,8 @@ jobs:
       - name: Compress Artifacts
         run: |
           mkdir release\build\zip
-          Compress-Archive -Path release\build\* -DestinationPath release\build\zip\windows-build.zip
+          Start-Sleep -Seconds 5  # Add delay to ensure no race condition
+          Compress-Archive -Path release\build\* -DestinationPath release\build\zip\windows-build.zip -Force
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
