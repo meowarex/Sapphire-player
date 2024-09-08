@@ -49,6 +49,8 @@ jobs:
         run: yarn install
       - name: Build Sapphire
         run: yarn package
+      - name: Install 7-Zip
+        run: choco install 7zip --no-progress -y
       - name: Ensure Directory is Clean and Compress Artifacts
         run: |
           $zipPath = "release\build\zip\windows-build.zip"
@@ -57,11 +59,11 @@ jobs:
           }
           mkdir release\build\zip
           $retryCount = 0
-          $maxRetries = 5
+          $maxRetries = 3
           $delay = 5
           while ($retryCount -lt $maxRetries) {
             try {
-              Compress-Archive -Path release\build\* -DestinationPath $zipPath -Force
+              & "C:\Program Files\7-Zip\7z.exe" a $zipPath release\build\*
               break
             } catch {
               Write-Output "Failed to compress files. Retrying in $delay seconds..."
