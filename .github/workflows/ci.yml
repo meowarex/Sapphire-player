@@ -160,12 +160,19 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh
       - name: Download All Artifacts
         uses: actions/download-artifact@v3
       - name: Display structure of downloaded files
         run: ls -R
-      - name: Post Releases
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "**/*"
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Draft Release
+        run: |
+          TAG=$(git describe --tags --abbrev=0 || echo "no-tag")
+          if [ "$TAG" = "no-tag" ]; then
+            gh release create "draft-$(date +%Y%m%d%H%M%S)" --draft --title "Draft Release" --notes "This is a draft release." release/build/*
+          else
+            gh release create "$TAG" --title "Release $TAG" --notes "Release notes for $TAG" release/build/*
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
