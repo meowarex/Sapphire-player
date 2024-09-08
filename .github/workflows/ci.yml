@@ -13,19 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: recursive
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: "yarn"
-
-      - name: Install gcc dependencies
-        run: sudo apt update && sudo apt install gcc-multilib g++-multilib libvips
-
       - name: Install Dependencies
         run: yarn install
-
       - name: Run eslint
         run: yarn lint
 
@@ -34,45 +27,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: recursive
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: "yarn"
-
-      - name: Install gcc dependencies
-        run: sudo apt update && sudo apt install gcc-multilib g++-multilib libvips
-
       - name: Install Dependencies
         run: yarn install
-
       - name: Run Tests
-        run: npm test
+        run: yarn test
 
   build-windows:
     name: Build Windows
     runs-on: windows-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: recursive
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: "yarn"
-
       - name: Install Dependencies
         run: yarn install
-
       - name: Build Sapphire
         run: yarn package
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
+          name: windows-build
           path: |
             release/build/*.yml
             release/build/*.yaml
@@ -81,24 +61,16 @@ jobs:
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: "yarn"
-
       - name: Install Dependencies
         run: yarn install
-
       - name: Make gradlew executable
         run: chmod +x ./src/android/gradlew
-
       - name: Build Sapphire
         env:
           ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
@@ -107,12 +79,10 @@ jobs:
           yarn build:renderer
           yarn cap sync
           yarn cap build android --keystorepath key.jks --androidreleasetype APK --keystorepass "$ANDROID_KEYSTORE_PASS" --keystorealias key0 --keystorealiaspass "$ANDROID_KEYSTORE_ALIAS_PASS"
-
       - name: Move build files
         run: |
           mkdir -p release/build/android
           mv ./src/android/app/build/outputs/apk/release/app-release-signed.apk ./release/build/android/amethyst-v$(node -p "require('./package.json').version").apk
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -127,26 +97,20 @@ jobs:
   #  build-macos:
   #    name: Build MacOS
   #    runs-on: macos-latest
-  #    permissions:
-  #      contents: write
   #    steps:
   #      - uses: actions/checkout@v3
-  #        with:
-  #          submodules: recursive
   #      - uses: actions/setup-node@v3
   #        with:
   #          node-version: 20
   #          cache: "yarn"
-  #
   #      - name: Install Dependencies
   #        run: yarn install
-  #
   #      - name: Build Sapphire
   #        run: USE_HARD_LINKS=false yarn package
-  #
   #      - name: Upload Artifacts
   #        uses: actions/upload-artifact@v3
   #        with:
+  #          name: macos-build
   #          path: |
   #            release/build/*.yml
   #            release/build/*.dmg
@@ -157,29 +121,25 @@ jobs:
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: recursive
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: "yarn"
-
       - name: Install linux dependencies
-        run: sudo apt update && sudo apt install rpm snapd libarchive-tools && sudo snap install snapcraft --classic && sudo snap install multipass --beta --classic
-
+        run: |
+          sudo apt update
+          sudo apt install -y rpm libarchive-tools
+          sudo snap install snapcraft --classic
       - name: Install Dependencies
         run: yarn install
-
       - name: Build sapphire
         run: yarn package
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
+          name: linux-build
           path: |
             release/build/*.yml
             release/build/*.yaml
@@ -191,7 +151,7 @@ jobs:
 
   publish-releases:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-windows, build-macos, build-linux, build-android]
+    needs: [build-windows, build-linux, build-android]
     name: Publish Releases
     runs-on: ubuntu-latest
     permissions:
@@ -199,10 +159,10 @@ jobs:
     steps:
       - name: Download All Artifacts
         uses: actions/download-artifact@v3
-        with:
-          name: artifact
-
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Post Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "./*"
+          artifacts: "**/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
