@@ -49,10 +49,15 @@ jobs:
         run: yarn install
       - name: Build Sapphire
         run: yarn package
-      - name: Compress Artifacts
+      - name: Ensure No Process and Compress Artifacts
         run: |
           mkdir release\build\zip
-          Start-Sleep -Seconds 5  # Add delay to ensure no race condition
+          Start-Sleep -Seconds 15  # Add delay to ensure no race condition
+          $process = Get-Process -Name "your-process-name" -ErrorAction SilentlyContinue
+          if ($process) {
+            Write-Output "Process is still running. Exiting."
+            exit 1
+          }
           Compress-Archive -Path release\build\* -DestinationPath release\build\zip\windows-build.zip -Force
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
