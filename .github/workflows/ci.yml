@@ -174,7 +174,7 @@ jobs:
           for file in $(find release/build -type f); do
             if [ -s "$file" ]; then
               echo "Uploading asset $file"
-              gh release upload "$UNIQUE_TAG" "$file"
+              gh release upload "$UNIQUE_TAG" "$file" --clobber
             else
               echo "Skipping empty file: $file"
             fi
