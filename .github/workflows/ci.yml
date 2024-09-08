@@ -195,25 +195,19 @@ jobs:
         run: ls -R release/build
       - name: Create Draft Release
         run: |
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
-          if [ "$TAG" = "no-tag" ]; then
-            gh release create "draft-$(date +%Y%m%d%H%M%S)" --draft --title "Draft Release" --notes "This is a draft release." $(find release/build -type f)
-          else
-            gh release create "$TAG" --title "Release $TAG" --notes "Release notes for $TAG" $(find release/build -type f)
-          fi
+          UNIQUE_TAG="release-$(date +%Y%m%d%H%M%S)"
+          gh release create "$UNIQUE_TAG" --draft --title "Draft Release $UNIQUE_TAG" --notes "This is a draft release."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload New Assets with Unique Names
         run: |
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
-          if [ "$TAG" != "no-tag" ]; then
-            for file in $(find release/build -type f); do
-              RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
-              BASENAME=$(basename "$file")
-              UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
-              echo "Uploading asset $file as $UNIQUE_NAME"
-              gh release upload "$TAG" "$file" --name "$UNIQUE_NAME"
-            done
-          fi
+          UNIQUE_TAG="release-$(date +%Y%m%d%H%M%S)"
+          for file in $(find release/build -type f); do
+            RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
+            BASENAME=$(basename "$file")
+            UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
+            echo "Uploading asset $file as $UNIQUE_NAME"
+            gh release upload "$UNIQUE_TAG" "$file" --name "$UNIQUE_NAME"
+          done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
