@@ -184,6 +184,11 @@ jobs:
           TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
           if [ "$TAG" != "no-tag" ]; then
             for file in $(find release/build -type f); do
+              ASSET_NAME=$(basename "$file")
+              ASSET_ID=$(gh api repos/:owner/:repo/releases/tags/$TAG | jq -r ".assets[] | select(.name==\"$ASSET_NAME\") | .id")
+              if [ -n "$ASSET_ID" ]; then
+                gh api --method DELETE repos/:owner/:repo/releases/assets/$ASSET_ID
+              fi
               gh release upload "$TAG" "$file" --clobber
             done
           fi
