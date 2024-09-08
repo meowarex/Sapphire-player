@@ -171,11 +171,11 @@ jobs:
         run: ls -R release/build
       - name: Create Draft Release
         run: |
-          TAG=$(git describe --tags --abbrev=0 || echo "no-tag")
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
           if [ "$TAG" = "no-tag" ]; then
-            gh release create "draft-$(date +%Y%m%d%H%M%S)" --draft --title "Draft Release" --notes "This is a draft release." release/build/*
+            gh release create "draft-$(date +%Y%m%d%H%M%S)" --draft --title "Draft Release" --notes "This is a draft release." $(find release/build -type f)
           else
-            gh release create "$TAG" --title "Release $TAG" --notes "Release notes for $TAG" release/build/*
+            gh release create "$TAG" --title "Release $TAG" --notes "Release notes for $TAG" $(find release/build -type f)
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
