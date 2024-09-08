@@ -194,14 +194,15 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R release/build
       - name: Create Draft Release
+        id: create_release
         run: |
           UNIQUE_TAG="release-$(date +%Y%m%d%H%M%S)"
+          echo "UNIQUE_TAG=$UNIQUE_TAG" >> $GITHUB_ENV
           gh release create "$UNIQUE_TAG" --draft --title "Draft Release $UNIQUE_TAG" --notes "This is a draft release."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Rename and Upload New Assets with Unique Names
         run: |
-          UNIQUE_TAG="release-$(date +%Y%m%d%H%M%S)"
           for file in $(find release/build -type f); do
             RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
             BASENAME=$(basename "$file")
@@ -212,3 +213,4 @@ jobs:
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UNIQUE_TAG: ${{ env.UNIQUE_TAG }}
