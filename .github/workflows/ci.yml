@@ -198,6 +198,10 @@ jobs:
           for file in $(find release/build -type f); do
             echo "File: $file"
             ls -lh "$file"
+            if [ ! -s "$file" ]; then
+              echo "Error: $file is empty."
+              exit 1
+            fi
           done
       - name: Create Draft Release
         id: create_release
