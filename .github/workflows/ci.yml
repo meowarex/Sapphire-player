@@ -49,14 +49,20 @@ jobs:
         run: yarn install
       - name: Build Sapphire
         run: yarn package
+      - name: Rename Artifacts with Unique Names
+        run: |
+          mkdir -p release/build/unique
+          for file in release/build/*; do
+            RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
+            BASENAME=$(basename "$file")
+            UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
+            mv "$file" "release/build/unique/$UNIQUE_NAME"
+          done
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: windows-build
-          path: |
-            release/build/*.yml
-            release/build/*.yaml
-            release/build/*.exe*
+          path: release/build/unique/*
 
   # Android build is disabled until we can get the keystore to work properly
   # Keys are not being read properly from the secrets store
@@ -86,13 +92,20 @@ jobs:
   #        run: |
   #          mkdir -p release/build/android
   #          mv ./src/android/app/build/outputs/apk/release/app-release-signed.apk ./release/build/android/amethyst-v$(node -p "require('./package.json').version").apk
+  #      - name: Rename Artifacts with Unique Names
+  #        run: |
+  #          mkdir -p release/build/android/unique
+  #          for file in release/build/android/*; do
+  #            RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
+  #            BASENAME=$(basename "$file")
+  #            UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
+  #            mv "$file" "release/build/android/unique/$UNIQUE_NAME"
+  #          done
   #      - name: Upload Artifacts
   #        uses: actions/upload-artifact@v3
   #        with:
   #          name: android-build
-  #          path: |
-  #            release/build/android/*.apk
-  #            release/build/android/*.json
+  #          path: release/build/android/unique/*
 
   # MacOS build is disabled until MacOS isn't such a pain to work with
   # Sideloading is not properly supported on MacOS & the build process is a pain
@@ -110,16 +123,20 @@ jobs:
   #        run: yarn install
   #      - name: Build Sapphire
   #        run: USE_HARD_LINKS=false yarn package
+  #      - name: Rename Artifacts with Unique Names
+  #        run: |
+  #          mkdir -p release/build/unique
+  #          for file in release/build/*; do
+  #            RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
+  #            BASENAME=$(basename "$file")
+  #            UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
+  #            mv "$file" "release/build/unique/$UNIQUE_NAME"
+  #          done
   #      - name: Upload Artifacts
   #        uses: actions/upload-artifact@v3
   #        with:
   #          name: macos-build
-  #          path: |
-  #            release/build/*.yml
-  #            release/build/*.dmg
-  #            release/build/*.dmg.*
-  #            release/build/*.zip
-  #            release/build/*.zip.*
+  #          path: release/build/unique/*
 
   build-linux:
     name: Build Linux
@@ -139,18 +156,20 @@ jobs:
         run: yarn install
       - name: Build sapphire
         run: yarn package
+      - name: Rename Artifacts with Unique Names
+        run: |
+          mkdir -p release/build/unique
+          for file in release/build/*; do
+            RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
+            BASENAME=$(basename "$file")
+            UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
+            mv "$file" "release/build/unique/$UNIQUE_NAME"
+          done
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: linux-build
-          path: |
-            release/build/*.yml
-            release/build/*.yaml
-            release/build/*.AppImage
-            release/build/*.rpm
-            release/build/*.deb
-            release/build/*.pacman
-            release/build/*.snap
+          path: release/build/unique/*
 
   publish-releases:
     if: ${{ success() }}
