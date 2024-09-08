@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import { amethyst, useState } from "@/amethyst";
-import SettingsGroup from "@/components/settings/SettingsGroup.vue";
-import { DiscordIcon } from "@/icons/material";
-import BaseSwitch from "@/components/input/BaseSwitch.vue";
+import { useState } from "@/amethyst";
+import SettingsBinarySwitch from "@/components/settings/SettingsBinarySwitch.vue";
+import SettingsCategorySplitter from "@/components/settings/SettingsCategorySplitter.vue";
 const state = useState();
 </script>
 
 <template>
-  <settings-group
-    v-if="amethyst.getCurrentPlatform() === 'desktop'"
-    text="Discord Rich Presence (RPC)"
-    :platforms="['desktop']"
-    description="The Discord Rich Presence (RPC) feature allows users to share information about their current activity on the Sapphire music app with their Discord contacts. When enabled, the RPC feature updates the user's Discord status to show the version of Sapphire, currently playing song or playlist, along with the artist and album. This feature enhances the social experience of using Sapphire and allows users to share their music preferences with friends and followers."
-    :icon="DiscordIcon"
-  >
-    <template #main>
-      <base-switch v-model="state.settings.value.useDiscordRichPresence" />
-    </template>
-  </settings-group>
+  <settings-category-splitter text="Integrations" />
+  <settings-binary-switch
+    v-model="state.settings.useDiscordRichPresence"
+    text="Discord Rich Presence"
+  />
 </template>

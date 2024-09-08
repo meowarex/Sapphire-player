@@ -7,7 +7,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import { app } from "electron";
-import { MainWindow } from "./mainWindow";
+import { checkForUpdatesAndInstall, MainWindow } from "./mainWindow";
 import Store from "electron-store";
 export const store = new Store();
 
@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "production")
 // if (isDebug) 
 // import("electron-debug").then(electronDebug => electronDebug ());
 
-app.setAppUserModelId("Sapphire");
+app.setAppUserModelId("Amethyst");
 app.commandLine.appendSwitch("js-flags", "--max-old-space-size=1536");
 
 if (!app.requestSingleInstanceLock()) {
@@ -50,8 +50,8 @@ else {
 				// Someone tried to run a second instance, we should focus our window.
 				if (mainWindow.window.isMinimized())
 					mainWindow.window.restore();
-					console.log(argv);
-				mainWindow.playAudio(argv[3]);
+
+				mainWindow.playAudio(argv[2]);
 				mainWindow.window.focus();
 			});
 
@@ -73,5 +73,6 @@ else {
 
 if (!IS_DEV) {
 	app
-		.whenReady();
+		.whenReady()
+		.then(checkForUpdatesAndInstall);
 }

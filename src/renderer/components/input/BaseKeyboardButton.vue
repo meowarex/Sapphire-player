@@ -35,10 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <kbd
-    class="text-7px font-aseprite"
-    :class="[active && 'active']"
-  >
+  <kbd :class="[active && 'active']">
     <slot />
   </kbd>
 </template>

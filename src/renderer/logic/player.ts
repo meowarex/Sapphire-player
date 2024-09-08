@@ -32,23 +32,19 @@ export class Player extends EventEmitter<{
   public queue = new Queue();
 
   public input = new Audio();
-  protected context = new AudioContext({latencyHint: "interactive"});
+  protected context = new window.AudioContext();
   public source = this.context.createMediaElementSource(this.input);
-  public nodeManager: AmethystAudioNodeManager;
+
+  public nodeManager = new AmethystAudioNodeManager(this.source, this.context);
 
   public constructor(){
     super();
 
-    // Set multichannel support
-    this.context.destination.channelCount = this.context.destination.maxChannelCount;
-
     this.input.addEventListener("timeupdate", () => this.currentTime.value = this.input.currentTime);
     this.input.onended = () => this.next();
 
-    this.nodeManager = new AmethystAudioNodeManager(this.source, this.context);
-    
     // Set the volume on first load
-    this.nodeManager.master.post.gain.value = this.volume.value;
+    this.nodeManager.master.audioNode.gain.value = this.volume.value;
   }
 
   private setPlayingTrack(track: Track) {
@@ -59,14 +55,6 @@ export class Player extends EventEmitter<{
     if (!track.isLoaded) {
       track.fetchAsyncData();
     }
-  }
-  
-  public getBufferSize() {
-    return ~~(this.context.baseLatency * this.context.sampleRate);
-  }
-
-  public async getLatency(){
-    return this.context.baseLatency * 1000;
   }
 
   /**
@@ -131,21 +119,11 @@ export class Player extends EventEmitter<{
   * Should be called when the user skips a track
   */
   public skip() {
-    const filterText = useLocalStorage("filterText", "");
-    let startOfQueue = 0;
-
-    if (filterText.value) {
-      const searchResults = this.queue.search(filterText.value);
-      startOfQueue = this.queue.getList().indexOf(searchResults[0]);
-      const nextInSearch = searchResults[searchResults.indexOf(this.getCurrentTrack()!) + 1];
-      this.currentTrackIndex.value = this.queue.getList().indexOf(nextInSearch);
-    } else {
-      this.currentTrackIndex.value++;
-    }
+    this.currentTrackIndex.value++;
 
     // Check if we reached the end of the queue
     if (!this.queue.getTrack(this.currentTrackIndex.value)) {
-      this.currentTrackIndex.value = startOfQueue;
+      this.currentTrackIndex.value = 0;
 
       // If we don't loop: go to the start of the queue and pause the player
       if (this.loopMode.value === LoopMode.None) {
@@ -166,15 +144,7 @@ export class Player extends EventEmitter<{
   }
 
   public previous() {
-    const filterText = useLocalStorage("filterText", "");
-
-    if (filterText.value) {
-      const searchResults = this.queue.search(filterText.value);
-      const nextInSearch = searchResults[searchResults.indexOf(this.getCurrentTrack()!) - 1];
-      this.currentTrackIndex.value = this.queue.getList().indexOf(nextInSearch);
-    } else {
-      this.currentTrackIndex.value--;
-    }
+    this.currentTrackIndex.value--;
 
     if (this.currentTrackIndex.value < 0) {
       this.currentTrackIndex.value = this.queue.getList().length - 1;
@@ -211,7 +181,7 @@ export class Player extends EventEmitter<{
 
   public setVolume(volume: number) {
 		this.volume.value = Math.max(0, Math.min(1, volume));
-    this.nodeManager.master.post.gain.value = this.volume.value;
+    this.nodeManager.master.audioNode.gain.value = this.volume.value;
     this.emit("volume", this.volume.value);
 	}
 

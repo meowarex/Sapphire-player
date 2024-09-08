@@ -17,7 +17,7 @@
 
 //     this.player.on("metadata", async metadata => {
 //       this.player.Store.state.processQueue.add(metadata.file);
-//       // TODO: refactor this system so amethyst automatically determines when processing has finished from child plugins
+//       // TODO: refactor this system so Sapphire automatically determines when processing has finished from child plugins
 //       await this.handlePlayAudio(metadata);
 //       this.player.Store.state.processQueue.delete(metadata.file);
 //     });

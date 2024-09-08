@@ -1,3 +1,4 @@
+import { Store } from "@/state";
 import PromisePool from "@supercharge/promise-pool";
 import { useLocalStorage } from "@vueuse/core";
 import { ref } from "vue";
@@ -68,18 +69,16 @@ export class Queue {
    * Saves the current queue to local storage for persistance
    */
   private syncLocalStorage() {
-    this.savedQueue.value = this.getList().map(t => t.absolutePath);
+    this.savedQueue.value = this.getList().map(t => t.path);
   }
 
   /**
    * Fetches all async data for each track concurrently
    */
   public async fetchAsyncData(force?: boolean){
-    const { amethyst } = await import("@/amethyst");
-
     return PromisePool
 			.for(force ? this.getList() : this.getList().filter(track => !track.isLoaded))
-			.withConcurrency(amethyst.store.settings.processingConcurrency || 3)
+			.withConcurrency(new Store().settings.processingConcurrency || 3)
 			.process(async track => {
         await track.fetchAsyncData(force);
         this.updateTotalSize();
@@ -123,7 +122,7 @@ export class Queue {
   }
 
   public clearErrored(){
-    this.getList().filter(t => t.hasErrored || t.deleted).forEach(t => this.remove(t));
+    this.getList().filter(t => t.hasErrored).forEach(t => this.remove(t));
     this.syncLocalStorage();
   }
 

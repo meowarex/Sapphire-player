@@ -6,12 +6,10 @@ import CircleToggleIcon from "./CircleToggleIcon.vue";
 import DisconnectIcon from "./DisconnectIcon.vue";
 import DuplicateIcon from "./DuplicateIcon.vue";
 import FilterIcon from "./FilterIcon.vue";
-import FlickerFreeIcon from "./FlickerFreeIcon.vue";
 import HeartIcon from "./HeartIcon.vue";
 import ListIcon from "./ListIcon.vue";
 import MagnetIcon from "./MagnetIcon.vue";
 import MasterIcon from "./MasterIcon.vue";
-import AddIcon from "./AddIcon.vue";
 import PuzzleIcon from "./PuzzleIcon.vue";
 import MyLocationIcon from "./MyLocationIcon.vue";
 import PaintBrushIcon from "./PaintBrushIcon.vue";
@@ -41,36 +39,15 @@ import ErrorIcon from "./ErrorIcon.vue";
 import ExternalLinkIcon from "./ExternalLinkIcon.vue";
 import BinocularsIcon from "./BinocularsIcon.vue";
 import ImageIcon from "./ImageIcon.vue";
-import NoImageIcon from "./NoImageIcon.vue";
-import ProcessIcon from "./ProcessIcon.vue";
-import BugIcon from "./BugIcon.vue";
-import SineIcon from "./SineIcon.vue";
-import HighShelfIcon from "./HighShelfIcon.vue";
-import LowShelfIcon from "./LowShelfIcon.vue";
-import LowpassIcon from "./LowpassIcon.vue";
-import HighpassIcon from "./HighpassIcon.vue";
-import BellIcon from "./BellIcon.vue";
-import BandpassIcon from "./BandpassIcon.vue";
 
 export {
   DiscordIcon,
-  HighShelfIcon,
-  ProcessIcon,
-  LowShelfIcon,
-  SineIcon,
-  LowpassIcon,
-  BugIcon,
-  HighpassIcon,
   LoadingIcon,
-  BellIcon,
   GitHubIcon,
-  BandpassIcon,
-  FlickerFreeIcon,
   BinocularsIcon,
   ZoomInIcon,
   ImageIcon,
   ZoomOutIcon,
-  NoImageIcon,
   ExternalLinkIcon,
   ResizeIcon,
   HideIcon,
@@ -78,7 +55,6 @@ export {
   PlayIcon,
   DownloadingUpdatesIcon,
   MusicFolderIcon,
-  AddIcon,
   AudioFileIcon,
   AdjustIcon,
   MagnetIcon,

@@ -63,6 +63,10 @@ onMounted(async () => {
   const vertices: THREE.Vector2[] = [];
   const indexes = [];
   const uniformData = {
+    u_vertical_zoom: {
+      type: "f",
+      value: useState().settings.spectrumVerticalZoom
+    },
     u_amplitude:  {        
       type: "iv1", 
       value: [] as number[]
@@ -118,24 +122,25 @@ onMounted(async () => {
   const gain = context.createGain();
   
 	props.node.connect(gain);
-  gain.gain.value = 32;
+  gain.gain.value = 24;
 	gain.connect(analyser);
 
-  analyser.fftSize = useState().settings.value.spectrumFftSize;
-	analyser.smoothingTimeConstant = useState().settings.value.spectrumSmoothing;
-	watch(() => useState().settings.value.spectrumFftSize, () => analyser.fftSize = useState().settings.value.spectrumFftSize);
-	watch(() => useState().settings.value.spectrumSmoothing, () => analyser.smoothingTimeConstant = useState().settings.value.spectrumSmoothing);
+  analyser.fftSize = useState().settings.spectrumFftSize;
+	analyser.smoothingTimeConstant = useState().settings.spectrumSmoothing;
+	watch(() => useState().settings.spectrumFftSize, () => analyser.fftSize = useState().settings.spectrumFftSize);
+	watch(() => useState().settings.spectrumSmoothing, () => analyser.smoothingTimeConstant = useState().settings.spectrumSmoothing);
+	watch(() => useState().settings.spectrumVerticalZoom, v => uniformData.u_vertical_zoom.value = v);
 
 	// Don't change these
-	analyser.maxDecibels = 12;
-	analyser.minDecibels = -64;
+	analyser.maxDecibels = 30;
+	analyser.minDecibels = -90;
 
   function animation() {
 		const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
 		analyser.getByteFrequencyData(dataArray);
 
-		const points = useState().settings.value.useLogarithmicSpectrum ? scaleLog(dataArray) : dataArray;
+		const points = useState().settings.useLogarithmicSpectrum ? scaleLog(dataArray) : dataArray;
     interpolateArray(Array.from(points), TOTAL_BARS).forEach((point, i) => {
       uniformData.u_amplitude.value[i] = point;
     }); 
@@ -162,10 +167,14 @@ onUnmounted(() => shouldStopRendering = true);
 </script>
 
 <template>
-  <div class="relative overflow-hidden w-full h-full  rounded-4px">
+  <div class="relative overflow-hidden w-full h-full bg-surface-900 rounded-4px">
     <canvas
       ref="threeCanvas"
       class="transform-gpu scale-25 origin-top-left absolute top-0 left-0"
     />
   </div>
 </template>
+
+<style scoped lang="postcss">
+
+</style>

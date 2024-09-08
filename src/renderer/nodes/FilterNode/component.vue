@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import Slider from "@/components/input/BaseSlider.vue";
 import CustomNode from "@/components/nodes/CustomNode.vue";
-import { FilterIcon,
-
-HighShelfIcon,
-LowShelfIcon,
-LowpassIcon,
-HighpassIcon,
-BellIcon,
-BandpassIcon,
-
-} from "@/icons/material";
+import { FilterIcon } from "@/icons/material";
 import { percentToLog } from "@/logic/math";
 import { watch } from "vue";
 import { AmethystFilterNode } from ".";
@@ -21,14 +12,14 @@ watch(() => props.node.frequencyPercent, percent => {
 });
 
 const FILTER_TYPES = [
-  // "allpass",
-  "lowshelf",
-  "lowpass",
-  "bandpass",
-  // "notch",
-  "peaking",
-  "highpass",
-  "highshelf",
+  "allpass",
+   "bandpass",
+   "highpass",
+   "highshelf",
+   "lowpass",
+   "lowshelf",
+   "notch",
+   "peaking"
 ];
 
 </script>
@@ -39,46 +30,22 @@ const FILTER_TYPES = [
     title="12 dB/oct Filter"
     :icon="FilterIcon"
   >
-    <div class="font-aseprite font-thin flex gap-2 items-center">
-      <p class="text-primary-900 ">
-        Type
-      </p>
-      <div class="flex rounded-2px overflow-hidden">
-        <button
+    <p class="font-aseprite font-thin flex gap-2 items-center">
+      <strong class="text-primary-900 ">Type</strong> 
+      <select
+        v-model="node.type"
+        class="bg-surface-600 w-full font-aseprite font-thin py-2"
+      >
+        <option
           v-for="filterType of FILTER_TYPES"
           :key="filterType"
-          class="text-10px cursor-pointer px-1 py-0.5 bg-surface-900"
-          :class="[node.type == filterType ? 'text-primary-800 bg-primary-800 bg-opacity-10' : 'text-surface-500']"
-          @mousedown.stop
-          @click="node.type = filterType"
+          class="text-10px"
+          :value="filterType"
         >
-          <HighShelfIcon
-            v-if="filterType == 'highshelf'"
-            class="h-4 w-4"
-          />
-          <LowShelfIcon
-            v-else-if="filterType == 'lowshelf'"
-            class="h-4 w-4"
-          />
-          <LowpassIcon
-            v-else-if="filterType == 'lowpass'"
-            class="h-4 w-4"
-          />
-          <HighpassIcon
-            v-else-if="filterType == 'highpass'"
-            class="h-4 w-4"
-          />
-          <BellIcon
-            v-else-if="filterType == 'peaking'"
-            class="h-4 w-4"
-          />
-          <BandpassIcon
-            v-else-if="filterType == 'bandpass'"
-            class="h-4 w-4"
-          />
-        </button>
-      </div>
-    </div>
+          {{ filterType }}
+        </option>
+      </select>
+    </p>
 
     <p class="font-aseprite font-thin">
       <strong class="text-primary-900 ">Frequency</strong>

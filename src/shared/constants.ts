@@ -21,6 +21,5 @@ export const ALLOWED_AUDIO_EXTENSIONS = [
   "mp3", 
   "m4a",
   "mp4",
-  "dfpwm",
   "webm",
 ];

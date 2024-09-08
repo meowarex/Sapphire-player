@@ -4,11 +4,11 @@ import { useState } from "@/amethyst";
 import LazyList from "@/components/LazyList.vue";
 import { MyLocationIcon } from "@/icons/material";
 import { onMounted, onUnmounted, watch } from "vue";
+import SquareButton from "@/components//input/SquareButton.vue";
 import DroppableContainer from "@/components/DroppableContainer.vue";
 import { Track } from "@/logic/track";
 import { useLocalStorage } from "@vueuse/core";
 import { player } from "@/logic/player";
-import BaseToolbarButton from "@/components/BaseToolbarButton.vue";
 const state = useState();
 const filterText = useLocalStorage("filterText", "");
 
@@ -21,8 +21,8 @@ const scrollToCurrentElement = (track?: Track) => {
   active.scrollTo({ top: estimatedPosition, behavior: "smooth" });
 };
 
-const autoscroll = () => state.settings.value.followQueue && scrollToCurrentElement();
-watch(() => state.settings.value.followQueue, () => autoscroll());
+const autoscroll = () => state.settings.followQueue && scrollToCurrentElement();
+watch(() => state.settings.followQueue, () => autoscroll());
 onMounted(() => {
   player.on("play", autoscroll);
 });
@@ -43,11 +43,11 @@ onUnmounted(() => {
       @mousedown="$event.which == 3 && (filterText = '')"
     >
 
-    <base-toolbar-button
+    <square-button
       class="absolute bottom-2 right-4.5 z-10 "
       :icon="MyLocationIcon"
-      :active="state.settings.value.followQueue"
-      @click="state.settings.value.followQueue = !state.settings.value.followQueue;"
+      :active="state.settings.followQueue"
+      @click="state.settings.followQueue = !state.settings.followQueue;"
     />
 
     <lazy-list

@@ -1,12 +1,10 @@
-import { AmethystAudioNode } from "@/logic/audio";
-import { NodeProperties } from "@/logic/audioManager";
+import { AmethystAudioNode, NodeProperties } from "@/logic/audio";
 import component from "./component.vue";
 
-export class AmethystSpectrumNode extends AmethystAudioNode {
+export class AmethystSpectrumNode extends AmethystAudioNode<AudioNode> {
   public constructor(context: AudioContext, position: NodeProperties["position"]) {
-    const pre = context.createGain();
-    const post = context.createGain();
-    pre.connect(post);
-    super(pre, post, "AmethystSpectrumNode", component, position);
+    super(context.createGain(), "SapphireSpectrumNode", component, position);
   }
+
+  public reset(){};
 }
