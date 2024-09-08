@@ -183,20 +183,35 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install GitHub CLI and jq
-        run: sudo apt-get install -y gh jq
+        run: sudo apt-get install -y gh jq unzip
       - name: Download All Artifacts
         uses: actions/download-artifact@v3
         with:
           path: release/build
-      - name: Display structure of downloaded files
-        run: ls -R release/build
-      - name: Check File Sizes
+      - name: Decompress Artifacts
         run: |
-          for file in $(find release/build -type f); do
+          mkdir -p release/build/extracted
+          unzip release/build/windows-build.zip -d release/build/extracted
+          unzip release/build/linux-build.zip -d release/build/extracted
+      - name: Display structure of extracted files
+        run: ls -R release/build/extracted
+      - name: Check File Sizes and Filter Output Files
+        run: |
+          mkdir -p release/build/output
+          for file in $(find release/build/extracted -type f); do
             echo "File: $file"
             ls -lh "$file"
             if [ ! -s "$file" ]; then
               echo "Skipping empty file: $file"
+            else
+              case "$file" in
+                *.exe|*.AppImage|*.deb|*.dmg)
+                  cp "$file" release/build/output/
+                  ;;
+                *)
+                  echo "Skipping non-output file: $file"
+                  ;;
+              esac
             fi
           done
       - name: Create Draft Release
@@ -207,15 +222,11 @@ jobs:
           gh release create "$UNIQUE_TAG" --draft --title "Draft Release $UNIQUE_TAG" --notes "This is a draft release."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload New Assets
+      - name: Upload Output Files
         run: |
-          for file in $(find release/build -type f); do
-            if [ -s "$file" ]; then
-              echo "Uploading asset $file"
-              gh release upload "$UNIQUE_TAG" "$file" --clobber
-            else
-              echo "Skipping empty file: $file"
-            fi
+          for file in $(find release/build/output -type f); do
+            echo "Uploading asset $file"
+            gh release upload "$UNIQUE_TAG" "$file" --clobber
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
