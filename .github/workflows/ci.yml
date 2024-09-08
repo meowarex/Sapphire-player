@@ -51,8 +51,8 @@ jobs:
         run: yarn package
       - name: Compress Artifacts
         run: |
-          mkdir -p release/build/zip
-          zip -r release/build/zip/windows-build.zip release/build/*
+          mkdir release\build\zip
+          Compress-Archive -Path release\build\* -DestinationPath release\build\zip\windows-build.zip
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
