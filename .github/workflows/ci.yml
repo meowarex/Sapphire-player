@@ -160,12 +160,15 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v3
       - name: Install GitHub CLI
         run: sudo apt-get install gh
       - name: Download All Artifacts
         uses: actions/download-artifact@v3
+        with:
+          path: release/build
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls -R release/build
       - name: Create Draft Release
         run: |
           TAG=$(git describe --tags --abbrev=0 || echo "no-tag")
