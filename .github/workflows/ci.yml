@@ -199,15 +199,16 @@ jobs:
           gh release create "$UNIQUE_TAG" --draft --title "Draft Release $UNIQUE_TAG" --notes "This is a draft release."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload New Assets with Unique Names
+      - name: Rename and Upload New Assets with Unique Names
         run: |
           UNIQUE_TAG="release-$(date +%Y%m%d%H%M%S)"
           for file in $(find release/build -type f); do
             RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
             BASENAME=$(basename "$file")
             UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
-            echo "Uploading asset $file as $UNIQUE_NAME"
-            gh release upload "$UNIQUE_TAG" "$file" --name "$UNIQUE_NAME"
+            mv "$file" "release/build/$UNIQUE_NAME"
+            echo "Uploading asset release/build/$UNIQUE_NAME"
+            gh release upload "$UNIQUE_TAG" "release/build/$UNIQUE_NAME"
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
