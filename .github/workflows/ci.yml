@@ -51,15 +51,14 @@ jobs:
         run: yarn package
       - name: Rename Artifacts with Unique Names
         run: |
-          mkdir -p release/build/unique
-          for file in release/build/*; do
-            if [ "$file" != "release/build/unique" ]; then
-              RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
-              BASENAME=$(basename "$file")
-              UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
-              mv "$file" "release/build/unique/$UNIQUE_NAME"
-            fi
-          done
+          mkdir release\build\unique
+          Get-ChildItem -Path release\build\* -File | ForEach-Object {
+            $randomSuffix = Get-Random -Minimum 1000 -Maximum 9999
+            $basename = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
+            $extension = [System.IO.Path]::GetExtension($_.Name)
+            $uniqueName = "$basename-$randomSuffix$extension"
+            Move-Item -Path $_.FullName -Destination "release\build\unique\$uniqueName"
+          }
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
