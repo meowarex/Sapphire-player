@@ -78,48 +78,16 @@ jobs:
             release/build/*.yaml
             release/build/*.exe*
 
-  # build-android:
-  #   name: Build Android
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: write
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         submodules: recursive
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 20
-  #         cache: 'yarn'
-
-  #     - name: Install Dependencies
-  #       run: yarn install
-
-  #     - name: Make gradlew executable
-  #       run: chmod +x ./src/android/gradlew
-
-  #     - name: Build Sapphire
-  #       run: yarn build:renderer && yarn cap sync && yarn cap build android --keystorepath key.jks --androidreleasetype APK --keystorepass ${{ secrets.ANDROID_KEYSTORE_PASS }} --keystorealias key0 --keystorealiaspass ${{ secrets.ANDROID_KEYSTORE_ALIAS_PASS }}
-
-  #     - name: Move build files
-  #       run: yarn move-file ./src/android/app/build/outputs/apk/release/app-release-signed.apk ./release/build/android/amethyst-v$(node -p "require('./package.json').version").apk
-
-  #     - name: Upload Artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         path: |
-  #           release/build/android/*.apk
-  #           release/build/android/*.json
-
-  build-macos:
-    name: Build MacOS
-    runs-on: macos-latest
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+
       - uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -128,18 +96,63 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
+      - name: Make gradlew executable
+        run: chmod +x ./src/android/gradlew
+
       - name: Build Sapphire
-        run: USE_HARD_LINKS=false yarn package
+        env:
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          ANDROID_KEYSTORE_ALIAS_PASS: ${{ secrets.ANDROID_KEYSTORE_ALIAS_PASS }}
+        run: |
+          yarn build:renderer
+          yarn cap sync
+          yarn cap build android --keystorepath key.jks --androidreleasetype APK --keystorepass "$ANDROID_KEYSTORE_PASS" --keystorealias key0 --keystorealiaspass "$ANDROID_KEYSTORE_ALIAS_PASS"
+
+      - name: Move build files
+        run: |
+          mkdir -p release/build/android
+          mv ./src/android/app/build/outputs/apk/release/app-release-signed.apk ./release/build/android/amethyst-v$(node -p "require('./package.json').version").apk
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
+          name: android-build
           path: |
-            release/build/*.yml
-            release/build/*.dmg
-            release/build/*.dmg.*
-            release/build/*.zip
-            release/build/*.zip.*
+            release/build/android/*.apk
+            release/build/android/*.json
+
+  # MacOS build is disabled until MacOS isn't such a pain to work with
+  # Sideloading is not properly supported on MacOS & the build process is a pain
+
+  #  build-macos:
+  #    name: Build MacOS
+  #    runs-on: macos-latest
+  #    permissions:
+  #      contents: write
+  #    steps:
+  #      - uses: actions/checkout@v3
+  #        with:
+  #          submodules: recursive
+  #      - uses: actions/setup-node@v3
+  #        with:
+  #          node-version: 20
+  #          cache: "yarn"
+  #
+  #      - name: Install Dependencies
+  #        run: yarn install
+  #
+  #      - name: Build Sapphire
+  #        run: USE_HARD_LINKS=false yarn package
+  #
+  #      - name: Upload Artifacts
+  #        uses: actions/upload-artifact@v3
+  #        with:
+  #          path: |
+  #            release/build/*.yml
+  #            release/build/*.dmg
+  #            release/build/*.dmg.*
+  #            release/build/*.zip
+  #            release/build/*.zip.*
 
   build-linux:
     name: Build Linux
@@ -178,7 +191,7 @@ jobs:
 
   publish-releases:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-windows, build-macos, build-linux]
+    needs: [build-windows, build-macos, build-linux, build-android]
     name: Publish Releases
     runs-on: ubuntu-latest
     permissions:
