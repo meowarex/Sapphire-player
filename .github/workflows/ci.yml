@@ -58,38 +58,41 @@ jobs:
             release/build/*.yaml
             release/build/*.exe*
 
-  build-android:
-    name: Build Android
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: "yarn"
-      - name: Install Dependencies
-        run: yarn install
-      - name: Make gradlew executable
-        run: chmod +x ./src/android/gradlew
-      - name: Build Sapphire
-        env:
-          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          ANDROID_KEYSTORE_ALIAS_PASS: ${{ secrets.ANDROID_KEYSTORE_ALIAS_PASS }}
-        run: |
-          yarn build:renderer
-          yarn cap sync
-          yarn cap build android --keystorepath key.jks --androidreleasetype APK --keystorepass "$ANDROID_KEYSTORE_PASS" --keystorealias key0 --keystorealiaspass "$ANDROID_KEYSTORE_ALIAS_PASS"
-      - name: Move build files
-        run: |
-          mkdir -p release/build/android
-          mv ./src/android/app/build/outputs/apk/release/app-release-signed.apk ./release/build/android/amethyst-v$(node -p "require('./package.json').version").apk
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: android-build
-          path: |
-            release/build/android/*.apk
-            release/build/android/*.json
+  # Android build is disabled until we can get the keystore to work properly
+  # Keys are not being read properly from the secrets store
+
+  #  build-android:
+  #    name: Build Android
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - uses: actions/checkout@v3
+  #      - uses: actions/setup-node@v3
+  #        with:
+  #          node-version: 20
+  #          cache: "yarn"
+  #      - name: Install Dependencies
+  #        run: yarn install
+  #      - name: Make gradlew executable
+  #        run: chmod +x ./src/android/gradlew
+  #      - name: Build Sapphire
+  #        env:
+  #          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+  #          ANDROID_KEYSTORE_ALIAS_PASS: ${{ secrets.ANDROID_KEYSTORE_ALIAS_PASS }}
+  #        run: |
+  #          yarn build:renderer
+  #          yarn cap sync
+  #          yarn cap build android --keystorepath key.jks --androidreleasetype APK --keystorepass "$ANDROID_KEYSTORE_PASS" --keystorealias key0 --keystorealiaspass "$ANDROID_KEYSTORE_ALIAS_PASS"
+  #      - name: Move build files
+  #        run: |
+  #          mkdir -p release/build/android
+  #          mv ./src/android/app/build/outputs/apk/release/app-release-signed.apk ./release/build/android/amethyst-v$(node -p "require('./package.json').version").apk
+  #      - name: Upload Artifacts
+  #        uses: actions/upload-artifact@v3
+  #        with:
+  #          name: android-build
+  #          path: |
+  #            release/build/android/*.apk
+  #            release/build/android/*.json
 
   # MacOS build is disabled until MacOS isn't such a pain to work with
   # Sideloading is not properly supported on MacOS & the build process is a pain
@@ -151,7 +154,7 @@ jobs:
 
   publish-releases:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-windows, build-linux, build-android]
+    needs: [build-windows, build-linux]
     name: Publish Releases
     runs-on: ubuntu-latest
     permissions:
