@@ -51,7 +51,7 @@ jobs:
         run: yarn package
       - name: Install 7-Zip
         run: choco install 7zip --no-progress -y
-      - name: Ensure Directory is Clean and Compress Artifacts
+      - name: Clean and Compress Artifacts
         run: |
           $zipPath = "release\build\zip\windows-build.zip"
           if (Test-Path $zipPath) {
@@ -191,8 +191,16 @@ jobs:
       - name: Decompress Artifacts
         run: |
           mkdir -p release/build/extracted
-          unzip release/build/windows-build.zip -d release/build/extracted
-          unzip release/build/linux-build.zip -d release/build/extracted
+          if [ -f release/build/windows-build.zip ]; then
+            unzip release/build/windows-build.zip -d release/build/extracted
+          else
+            echo "windows-build.zip not found"
+          fi
+          if [ -f release/build/linux-build.zip ]; then
+            unzip release/build/linux-build.zip -d release/build/extracted
+          else
+            echo "linux-build.zip not found"
+          fi
       - name: Display structure of extracted files
         run: ls -R release/build/extracted
       - name: Check File Sizes and Filter Output Files
