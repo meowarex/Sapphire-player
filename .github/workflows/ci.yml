@@ -179,3 +179,13 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Replace Existing Assets
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
+          if [ "$TAG" != "no-tag" ]; then
+            for file in $(find release/build -type f); do
+              gh release upload "$TAG" "$file" --clobber
+            done
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
