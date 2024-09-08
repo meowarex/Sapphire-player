@@ -162,7 +162,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install GitHub CLI
-        run: sudo apt-get install gh
+        run: sudo apt-get install gh jq
       - name: Download All Artifacts
         uses: actions/download-artifact@v3
         with:
@@ -185,9 +185,9 @@ jobs:
           if [ "$TAG" != "no-tag" ]; then
             for file in $(find release/build -type f); do
               ASSET_NAME=$(basename "$file")
-              ASSET_ID=$(gh api repos/:owner/:repo/releases/tags/$TAG | jq -r ".assets[] | select(.name==\"$ASSET_NAME\") | .id")
+              ASSET_ID=$(gh api repos/${{ github.repository }}/releases/tags/$TAG | jq -r ".assets[] | select(.name==\"$ASSET_NAME\") | .id")
               if [ -n "$ASSET_ID" ]; then
-                gh api --method DELETE repos/:owner/:repo/releases/assets/$ASSET_ID
+                gh api --method DELETE repos/${{ github.repository }}/releases/assets/$ASSET_ID
               fi
               gh release upload "$TAG" "$file" --clobber
             done
