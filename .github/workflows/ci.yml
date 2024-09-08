@@ -193,6 +193,12 @@ jobs:
           path: release/build
       - name: Display structure of downloaded files
         run: ls -R release/build
+      - name: Check File Sizes
+        run: |
+          for file in $(find release/build -type f); do
+            echo "File: $file"
+            ls -lh "$file"
+          done
       - name: Create Draft Release
         id: create_release
         run: |
