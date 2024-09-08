@@ -161,8 +161,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
-      - name: Install GitHub CLI and jq
-        run: sudo apt-get install -y gh jq
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh jq
       - name: Download All Artifacts
         uses: actions/download-artifact@v3
         with:
@@ -179,7 +179,7 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Delete Existing Assets
+      - name: Replace Existing Assets
         run: |
           TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
           if [ "$TAG" != "no-tag" ]; then
@@ -187,19 +187,8 @@ jobs:
               ASSET_NAME=$(basename "$file")
               ASSET_ID=$(gh api repos/${{ github.repository }}/releases/tags/$TAG | jq -r ".assets[] | select(.name==\"$ASSET_NAME\") | .id")
               if [ -n "$ASSET_ID" ]; then
-                echo "Deleting asset $ASSET_NAME with ID $ASSET_ID"
                 gh api --method DELETE repos/${{ github.repository }}/releases/assets/$ASSET_ID
               fi
-            done
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload New Assets
-        run: |
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "no-tag")
-          if [ "$TAG" != "no-tag" ]; then
-            for file in $(find release/build -type f); do
-              echo "Uploading asset $file"
               gh release upload "$TAG" "$file" --clobber
             done
           fi
