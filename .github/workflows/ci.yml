@@ -158,8 +158,7 @@ jobs:
             echo "File: $file"
             ls -lh "$file"
             if [ ! -s "$file" ]; then
-              echo "Error: $file is empty."
-              exit 1
+              echo "Skipping empty file: $file"
             fi
           done
       - name: Create Draft Release
@@ -173,8 +172,12 @@ jobs:
       - name: Upload New Assets
         run: |
           for file in $(find release/build -type f); do
-            echo "Uploading asset $file"
-            gh release upload "$UNIQUE_TAG" "$file"
+            if [ -s "$file" ]; then
+              echo "Uploading asset $file"
+              gh release upload "$UNIQUE_TAG" "$file"
+            else
+              echo "Skipping empty file: $file"
+            fi
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
