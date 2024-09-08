@@ -53,10 +53,12 @@ jobs:
         run: |
           mkdir -p release/build/unique
           for file in release/build/*; do
-            RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
-            BASENAME=$(basename "$file")
-            UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
-            mv "$file" "release/build/unique/$UNIQUE_NAME"
+            if [ "$file" != "release/build/unique" ]; then
+              RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
+              BASENAME=$(basename "$file")
+              UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
+              mv "$file" "release/build/unique/$UNIQUE_NAME"
+            fi
           done
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
@@ -127,10 +129,12 @@ jobs:
   #        run: |
   #          mkdir -p release/build/unique
   #          for file in release/build/*; do
-  #            RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
-  #            BASENAME=$(basename "$file")
-  #            UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
-  #            mv "$file" "release/build/unique/$UNIQUE_NAME"
+  #            if [ "$file" != "release/build/unique" ]; then
+  #              RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
+  #              BASENAME=$(basename "$file")
+  #              UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
+  #              mv "$file" "release/build/unique/$UNIQUE_NAME"
+  #            fi
   #          done
   #      - name: Upload Artifacts
   #        uses: actions/upload-artifact@v3
@@ -160,10 +164,12 @@ jobs:
         run: |
           mkdir -p release/build/unique
           for file in release/build/*; do
-            RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
-            BASENAME=$(basename "$file")
-            UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
-            mv "$file" "release/build/unique/$UNIQUE_NAME"
+            if [ "$file" != "release/build/unique" ]; then
+              RANDOM_SUFFIX=$(shuf -i 1000-9999 -n 1)
+              BASENAME=$(basename "$file")
+              UNIQUE_NAME="${BASENAME%.*}-$RANDOM_SUFFIX.${BASENAME##*.}"
+              mv "$file" "release/build/unique/$UNIQUE_NAME"
+            fi
           done
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
