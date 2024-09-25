@@ -859,20 +859,22 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
-"@types/node@*", "@types/node@^18.11.18":
-  version "18.11.18"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.18.tgz#8dfb97f0da23c2293e554c5a50d61ef134d7697f"
-  integrity sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==
+"@types/node@*", "@types/node@^20.9.0":
+  version "20.16.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.16.8.tgz#36f5c22e2ac6b61f3728f756d27e759246f0e98a"
+  integrity sha512-sbo5JmfbZNkyDv+2HCccr9Y9ZkKJBMTru7UdAsCojMGjKNjdaOV73bqEW242QrHEZL8R4LbHMrW+FHB5lZ5/bw==
+  dependencies:
+    undici-types "~6.19.2"
 
 "@types/node@^10.0.3":
   version "10.17.60"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.60.tgz#35f3d6213daed95da7f0f73e75bcc6980e90597b"
   integrity sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==
 
-"@types/node@^16.11.26":
-  version "16.18.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.3.tgz#d7f7ba828ad9e540270f01ce00d391c54e6e0abc"
-  integrity sha512-jh6m0QUhIRcZpNv7Z/rpN+ZWXOicUUQbSoWks7Htkbb9IjFQj4kzcX/xFCkjstCj5flMsN8FiSvt+q+Tcs4Llg==
+"@types/node@^18.11.18":
+  version "18.11.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.18.tgz#8dfb97f0da23c2293e554c5a50d61ef134d7697f"
+  integrity sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==
 
 "@types/pako@^2.0.3":
   version "2.0.3"
@@ -2634,13 +2636,13 @@ electron-window-state@^5.0.3:
     jsonfile "^4.0.0"
     mkdirp "^0.5.1"
 
-electron@22.2.0:
-  version "22.2.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-22.2.0.tgz#1aa321415d8b8021a4b0807641f0ad56028feaf5"
-  integrity sha512-puRZSF2vWJ4pz3oetL5Td8LcuivTWz3MoAk/gjImHSN1B/2VJNEQlw1jGdkte+ppid2craOswE2lmCOZ7SwF1g==
+electron@32.1.2:
+  version "32.1.2"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-32.1.2.tgz#84d1efd95d41224e58a6a9bbd1db4ba80154fc02"
+  integrity sha512-CXe6doFzhmh1U7daOvUzmF6Cj8hssdYWMeEPRnRO6rB9/bbwMlWctcQ7P8NJXhLQ88/vYUJQrJvlJPh8qM0BRQ==
   dependencies:
     "@electron/get" "^2.0.0"
-    "@types/node" "^16.11.26"
+    "@types/node" "^20.9.0"
     extract-zip "^2.0.1"
 
 electronmon@^2.0.2:
@@ -5515,6 +5517,11 @@ unbox-primitive@^1.0.2:
     has-bigints "^1.0.2"
     has-symbols "^1.0.3"
     which-boxed-primitive "^1.0.2"
+
+undici-types@~6.19.2:
+  version "6.19.8"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.19.8.tgz#35111c9d1437ab83a7cdc0abae2f26d88eda0a02"
+  integrity sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==
 
 universalify@^0.1.0:
   version "0.1.2"
