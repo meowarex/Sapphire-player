@@ -271,7 +271,7 @@
   "homepage": "https://github.com/A-T-O-M-I-X/Sapphire-player#readme",
   "devDependencies": {
     "@types/discord-rpc": "^4.0.3",
-    "@types/file-saver": "^2.0.5",
+    "@types/file-saver": "^2.0.7",
     "@types/mime-types": "^2.1.1",
     "@types/node": "^18.11.18",
     "@types/sharp": "^0.31.1",
