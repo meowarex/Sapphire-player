@@ -329,7 +329,7 @@
     "file-saver": "^2.0.5",
     "mime-types": "^2.1.35",
     "mitt": "^3.0.1",
-    "music-metadata": "7.13.1",
+    "music-metadata": "7.14.0",
     "musicbrainz-api": "^0.19.1",
     "open": "^10.1.0",
     "pako": "^2.1.0",
