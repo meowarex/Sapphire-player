@@ -339,7 +339,7 @@
     "three": "^0.168.0",
     "vite": "^4.1.1",
     "vite-plugin-windicss": "^1.8.10",
-    "vue": "^3.4.38",
+    "vue": "^3.5.7",
     "vue-router": "4",
     "vue-virtual-scroller": "^2.0.0-beta.8",
     "wavesurfer.js": "^6.4.0",
